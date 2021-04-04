@@ -1,0 +1,73 @@
+<ion-content class="ion-padding-top ion-padding-bottom">
+	<ion-grid class="px-0">
+		<ion-row class="mb-1 ion-padding-start ion-padding-end">
+			<ion-col>
+				<div class="header-title">Hasil</div>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-padding-start ion-padding-end">
+			<ion-col>
+				<div class="c-medium-tint mb-05"><small>Pilih Pelatihan</small></div>
+				<div [routerLink]="['/pemateri/pelatihan']" class="border border-card p-1 d-flex ion-align-items-center"  [ngClass]="dataPelatihanAktif? 'border-c-primary c-primary' : 'c-medium-tint'">
+					<div class="flex-1 text-max text-max-1">
+						<b *ngIf="dataPelatihanAktif">
+							{{dataPelatihanAktif.nama}}
+						</b>
+						<span *ngIf="!dataPelatihanAktif">Tidak Ada Pelatihan Yang Aktif</span>
+					</div>
+					<ion-icon name="chevron-down"></ion-icon>
+				</div>
+			</ion-col>
+		</ion-row>
+		<!-- <ion-row class="ion-padding-start ion-padding-end">
+			<ion-col>
+				<div class="c-medium-tint mb-05"><small>Filter</small></div>
+				<div class="mb-1 o-auto">
+					<div class="d-table-cell">
+						<ion-select mode="ios" interface="action-sheet" [interfaceOptions]="{ header: 'Mau lihat status apa?' }"[(ngModel)]="jenis" class="border border-card py-05 px-1 slide-pembelian mr-1">
+							<ion-select-option value="semua">Semua Peserta</ion-select-option>
+							<ion-select-option value="anda">Peserta Sudah Mengerjakan</ion-select-option>
+							<ion-select-option value="baru">Pelatihan Baru</ion-select-option>
+						</ion-select>
+					</div>
+
+					<div class="d-table-cell">
+						<ion-select mode="ios" interface="action-sheet" [interfaceOptions]="{ header: 'Mau lihat status apa?' }" [(ngModel)]="status" class="border border-card py-05 px-1 slide-pembelian mr-1">
+							<ion-select-option value="semua">Semua Status</ion-select-option>
+							<ion-select-option value="pembayaran">Menunggu Pembayaran</ion-select-option>
+							<ion-select-option value="konfirmasi">Menunggu Konfirmasi</ion-select-option>
+							<ion-select-option value="konfirmasi">Berhasil Terdaftar</ion-select-option>
+						</ion-select>
+					</div>
+				</div>
+			</ion-col>
+		</ion-row> -->
+		<ion-row>
+			<ion-col>
+				<ion-searchbar mode="ios" placeholder="Cari Test Atau Materi" class="contain-unset h-auto ion-no-padding ion-padding-start ion-padding-end mb-2"></ion-searchbar>
+			</ion-col>
+		</ion-row>
+		<ion-row *ngIf="dataHasil.length < 1" class="ion-padding-start ion-padding-end mb-05">
+			<ion-col>
+				<ion-card mode="ios" class="ion-no-margin ion-padding">
+					<div class="ion-text-center">
+						<div class="c-medium-tint mb-05">Tidak Ada Hasil Untuk "{{dataPelatihanAktif?.nama}}"</div>
+						<!-- <div><ion-button color="primary" size="small" [disabled]="!dataPelatihanAktif" (click)="tambahMateri()">+ Tambah Materi</ion-button></div> -->
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+		<ion-row *ngIf="dataHasil.length > 0" class="ion-padding-start ion-padding-end mb-2">
+			<ion-col size="4" *ngFor="let m of [1,2,3,4,5,6]">
+				<ion-card mode="ios" class="ion-no-margin w-100">
+					<div class="p-relative pb-100">
+						<div class="p-absolute h-100 w-100 b-dark-30p">
+
+						</div>
+						<!-- <ion-img style="pointer-events:none" src="https://via.placeholder.com/150" class="p-absolute w-100 h-100 of-cover"></ion-img> -->
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>

@@ -1,0 +1,163 @@
+<ion-content class="ion-padding">
+	<ion-grid>
+		<ion-row class="ion-margin-bottom">
+			<ion-col>
+				<div class="d-flex align-items-center">
+					<div class="header-title flex-1">Master Data</div>
+				</div>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col class="d-flex ion-align-items-center">
+				<h3 class="flex-1 ion-no-margin c-medium-tint"><b>Data Pemateri</b></h3>
+				<ion-note [routerLink]="['/admin/master/data', { data: 'pemateri' }]" color="primary" class="flex-shrink-0">Lihat Semua ({{dataPemateri.length}})</ion-note>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-card *ngFor="let o of dataPemateri | slice:0:2;" [routerLink]="['detail', {jenis: 'pemateri', id: o._id}]" mode="ios" class="ion-no-margin ion-margin-bottom ion-padding border-avatar">
+					<div class="d-flex align-items-center flex-wrap">
+						<ion-avatar class="ion-margin-end flex-shrink-0 border-avatar">
+							<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg">
+						</ion-avatar>
+						<div class="flex-1">
+							<div class="text-max text-max-1 ion-text-capitalize"><b>{{o.namaLengkap || '-'}}</b></div>
+							<div class="text-max text-max-1"><small>{{o.email || '-'}}</small></div>
+							<ion-note color="primary"><small>{{o.noTlp || '-'}}</small></ion-note>
+						</div>
+						<div class="flex-shrink-0">
+							<ion-icon name="chevron-forward-outline"></ion-icon>
+						</div>
+					</div>
+				</ion-card>
+
+				<ion-card *ngIf="dataPemateri.length < 1 || (dataPemateri.length < 1 && pemateriLoading > 0)" mode="ios" class="ion-no-margin ion-padding o-hidden h-6r">
+					<div class="ion-text-center">
+						<h6 class="ion-no-margin mb-1 c-medium-tint">
+							{{pemateriLoading == 1? 'Memuat Data Pemateri..' : pemateriLoading == 0? 'Data Pemateri Kosong' : 'Gagal Memuat Data Pemateri'}}
+						</h6>
+						<ion-button *ngIf="pemateriLoading == 0" mode="ios" size="small" color="primary">Tambah Pemateri</ion-button>
+						<ion-spinner *ngIf="pemateriLoading == 1" name="lines"></ion-spinner>
+						<ion-button *ngIf="pemateriLoading == 2" mode="ios" size="small" color="warning" (click)="ambilPemateri()">Coba Lagi</ion-button>
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col class="d-flex ion-align-items-center">
+				<h3 class="flex-1 ion-no-margin c-medium-tint"><b>Data Peserta</b></h3>
+				<ion-note [routerLink]="['/admin/master/data', { data: 'peserta' }]" color="primary" class="flex-shrink-0">Lihat Semua ({{dataPeserta.length}})</ion-note>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-card *ngFor="let s of dataPeserta | slice:0:2;" [routerLink]="['detail', {jenis: 'peserta', id: s._id}]" mode="ios" class="ion-no-margin ion-margin-bottom ion-padding border-avatar">
+					<div class="d-flex align-items-center flex-wrap">
+						<ion-avatar class="ion-margin-end flex-shrink-0 border-avatar">
+							<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg">
+						</ion-avatar>
+						<div class="flex-1">
+							<div class="text-max text-max-1 ion-text-capitalize"><b>{{s.namaLengkap}}</b></div>
+							<div class="text-max text-max-1"><small>{{s.email || '-'}}</small></div>
+							<ion-note color="primary"><small>{{s.noTlp || '-'}}</small></ion-note>
+						</div>
+						<div class="flex-shrink-0">
+							<ion-icon name="chevron-forward-outline"></ion-icon>
+						</div>
+					</div>
+				</ion-card>
+				<ion-card *ngIf="dataPeserta.length < 1 || (dataPeserta.length < 1 && pesertaLoading > 0)" mode="ios" class="ion-no-margin ion-padding o-hidden h-6r">
+					<div class="ion-text-center">
+						<h6 class="ion-no-margin mb-1 c-medium-tint">
+							{{pesertaLoading == 1? 'Memuat Data Peserta..' : pesertaLoading == 0? 'Data Peserta Kosong' : 'Gagal Memuat Data Peserta'}}
+						</h6>
+						<ion-button *ngIf="pesertaLoading == 0" mode="ios" size="small" color="primary">Tambah Peserta</ion-button>
+						<ion-spinner *ngIf="pesertaLoading == 1" name="lines"></ion-spinner>
+						<ion-button *ngIf="pesertaLoading == 2" mode="ios" size="small" color="warning" (click)="ambilPeserta()">Coba Lagi</ion-button>
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+		<!-- <ion-row>
+			<ion-col class="d-flex ion-align-items-center">
+				<h3 class="flex-1 ion-no-margin c-medium-tint"><b>Data Rekening</b></h3>
+				<ion-note [routerLink]="['/admin/master/data', { data: 'rekening' }]" color="primary" class="flex-shrink-0">Lihat Semua ({{dataRekening.length}})</ion-note>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-margin-bottom">
+			<ion-col size="6" *ngFor="let k of dataRekening | slice:0:4" [routerLink]="['/admin/master/detail', { jenis: 'rekening', id: k._id }]">
+				<ion-card mode="ios" class="ion-no-margin ion-padding">
+					<div><b>{{k.namaBank || '-'}}</b></div>
+					<div><b>{{k.noRek || '-'}}</b></div>
+					<ion-note color="primary"><small>{{k.atasNama || '-'}}</small></ion-note>
+				</ion-card>
+			</ion-col>
+			<ion-col *ngIf="dataRekening.length < 1 || (dataRekening.length < 1 && rekeningLoading > 0)" size="12" class="h-6r">
+				<ion-card mode="ios" class="ion-no-margin ion-padding o-hidden">
+					<div class="ion-text-center">
+						<h6 class="ion-no-margin mb-1 c-medium-tint">
+							{{rekeningLoading == 1? 'Memuat Data Rekening...' : rekeningLoading == 0? 'Data Rekening Kosong' : 'Gagal Memuat Data Rekening'}}
+						</h6>
+						<ion-button *ngIf="rekeningLoading == 0" mode="ios" size="small" color="primary">Tambah Rekening</ion-button>
+						<ion-spinner *ngIf="rekeningLoading == 1" name="lines"></ion-spinner>
+						<ion-button *ngIf="rekeningLoading == 2" mode="ios" size="small" color="warning" (click)="ambilRekening()">Coba Lagi</ion-button>
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col class="d-flex ion-align-items-center">
+				<h3 class="flex-1 ion-no-margin c-medium-tint"><b>Data Kelas</b></h3>
+				<ion-note [routerLink]="['/admin/master/data', { data: 'kelas' }]" color="primary" class="flex-shrink-0">Lihat Semua ({{dataKelas.length}})</ion-note>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-margin-bottom">
+			<ion-col size="6" *ngFor="let kl of dataKelas | slice:0:4" [routerLink]="['/admin/master/detail', { jenis: 'kelas', id: kl._id }]">
+				<ion-card mode="ios" class="ion-no-margin ion-padding o-hidden">
+					<div class="text-max text-max-1 wp-nowrap"><b>{{kl.title}}</b></div>
+					<ion-note color="primary"><small>{{kl.totSiswa || 0}} Siswa</small></ion-note>
+				</ion-card>
+			</ion-col>
+
+			<ion-col *ngIf="dataKelas.length < 1 || (dataKelas.length < 1 && kelasLoading > 0)" size="12" class="h-6r">
+				<ion-card mode="ios" class="ion-no-margin ion-padding o-hidden">
+					<div class="ion-text-center">
+						<h6 class="ion-no-margin mb-1 c-medium-tint">
+							{{kelasLoading == 1? 'Memuat Data Kelas..' : kelasLoading == 1? 'Data Kelas Kosong' : 'Gagal Memuat Data Kelas'}}
+						</h6>
+						<ion-button *ngIf="kelasLoading == 0" mode="ios" size="small" color="primary">Tambah Kelas</ion-button>
+						<ion-spinner *ngIf="kelasLoading == 1" name="lines"></ion-spinner>
+						<ion-button *ngIf="kelasLoading == 2" mode="ios" size="small" color="warning" (click)="ambilKelas()">Coba Lagi</ion-button>
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row> -->
+		<ion-row>
+			<ion-col class="d-flex ion-align-items-center">
+				<h3 class="flex-1 ion-no-margin c-medium-tint"><b>Data Tingkatan</b></h3>
+				<ion-note [routerLink]="['/admin/master/data', { data: 'tingkatan' }]" color="primary" class="flex-shrink-0">Lihat Semua ({{dataTingkatan.length}})</ion-note>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-margin-bottom">
+			<ion-col size="6" *ngFor="let k of dataTingkatan | slice:0:4">
+				<ion-card mode="ios" class="ion-no-margin ion-padding">
+					<small>Nama Tingkatan</small>
+					<h5 class="text-max text-max-1 wp-nowrap ion-no-margin"><b>{{k.title}}</b></h5>
+					<!-- <ion-note color="primary"><small>{{k.totTagAktif || 0}} Tagihan Aktif</small></ion-note> -->
+				</ion-card>
+			</ion-col>
+			<ion-col *ngIf="dataTingkatan.length < 1 || (dataTingkatan.length < 1 && tingkatanLoading > 0)" size="12" class="h-6r">
+				<ion-card mode="ios" class="ion-no-margin ion-padding o-hidden">
+					<div class="ion-text-center">
+						<h6 class="ion-no-margin mb-1 c-medium-tint">
+							{{tingkatanLoading == 1? 'Memuat Data Tingkatan...' : tingkatanLoading == 0? 'Data Tingkatan Kosong' : 'Gagal Memuat Data Tingkatan'}}
+						</h6>
+						<ion-button *ngIf="tingkatanLoading == 0" mode="ios" size="small" color="primary">Tambah Tingkatan</ion-button>
+						<ion-spinner *ngIf="tingkatanLoading == 1" name="lines"></ion-spinner>
+						<ion-button *ngIf="tingkatanLoading == 2" mode="ios" size="small" color="warning" (click)="ambilTingkatan()">Coba Lagi</ion-button>
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>

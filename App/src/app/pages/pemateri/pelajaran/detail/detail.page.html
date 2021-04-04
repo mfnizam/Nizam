@@ -1,0 +1,100 @@
+<ion-content class="ion-padding-top ion-padding-bottom">
+	<ion-grid class="px-0">
+		<ion-row class="header-title mb-1 ion-padding-start ion-padding-end ion-margin-bottom ion-align-items-center">
+			<ion-col size="auto" class="d-none back-btn">
+				<ion-icon name="arrow-back" (click)="goBack()"></ion-icon>
+			</ion-col>
+			<ion-col>
+				<div>Detail Pelajaran</div>
+			</ion-col>
+			<ion-col size="auto" class="d-flex ion-align-items-end">
+				<h3 [routerLink]="['/pemateri/pelajaran/cu', {jenis: 'materi', update: true, idMateri: dataMateri?._id}]" class="ion-no-margin opacity-3 mr-1"><ion-icon name="create-outline"></ion-icon></h3>
+				<h3 class="ion-no-margin opacity-3" (click)="hapus(dataMateri? dataMateri.jenis : 0, dataPelajaran?.nama, dataMateri?._id)"><ion-icon name="trash-outline" color="danger"></ion-icon></h3>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-margin-bottom ion-padding-start ion-padding-end">
+			<ion-col>
+				<ion-card mode="ios" class="ion-no-margin ion-padding">
+					<div class="ion-margin-bottom">
+						<small>{{jenisMateri[dataMateri?.jenis]?.title}} Dari Pelajaran</small>
+						<div class="c-primary ion-text-capitalize"><b>{{dataPelajaran?.nama || '-'}}</b></div>
+					</div>
+					<div class="ion-margin-bottom">
+						<small>Jenis</small>
+						<div class="c-primary"><b>{{jenisMateri[dataMateri?.jenis]?.title || '-'}}</b></div>
+					</div>
+					<div class="ion-margin-bottom">
+						<small>Tanggal Pelakasanaan</small>
+						<div class="">
+							<b *ngIf="dataMateri?.tglPelaksanaan">{{dataMateri?.tglPelaksanaan | date:'dd MMM yyyy'}}</b>
+							<b *ngIf="!dataMateri?.tglPelaksanaan">{{'-'}}</b>
+						</div>
+					</div>
+					<div class="ion-margin-bottom">
+						<small>Waktu Pelakasanaan</small>
+						<div class=""><b>{{dataMateri?.waktuPelaksanaanMulai | date:'HH:mm'}} - {{dataMateri?.waktuPelaksanaanAkhir | date:'HH:mm'}}</b></div>
+					</div>
+					<div>
+						<small>Durasi Pelaksanaan</small>
+						<div class="">
+							<b>
+								<span *ngIf="(dataMateri?.durasiPelaksanaan | date:'HH') > 0">{{dataMateri?.durasiPelaksanaan | date:'HH'}} Jam </span>
+								<span *ngIf="!dataMateri?.durasiPelaksanaan || ((dataMateri?.durasiPelaksanaan | date:'HH') > 0 && (dataMateri?.durasiPelaksanaan | date:'mm') > 0)"> - </span>
+								<span *ngIf="(dataMateri?.durasiPelaksanaan | date:'mm') > 0">{{dataMateri?.durasiPelaksanaan | date:'mm'}} Menit</span>
+							</b>
+						</div>
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-padding-start ion-padding-end">
+			<ion-col>
+				<h4 class="ion-no-margin opacity-3 fw-bold">{{dataMateri?.jenis < 4? 'Soal' : ''}} {{jenisMateri[dataMateri?.jenis]?.title}}</h4>
+			</ion-col>
+			<!-- <ion-col [routerLink]="['/pemateri/pelajaran/cu', {jenis: 'soal', idMateri: dataMateri?._id}]" size="auto" class="c-primary"><small>+ Tambah {{jenisMateri[dataMateri?.jenis]?.jenis}}</small></ion-col> -->
+		</ion-row>
+		<ion-row class="mb-1 ion-padding-start ion-padding-end">
+			<ion-col>
+				<ion-card *ngIf="dataMateri?.soal && dataMateri?.soal?.length > 0" mode="ios" class="ion-no-margin ion-padding">
+					<div #soalList *ngFor="let s of dataMateri?.soal; let i = index;" class="border border-card ion-padding ion-margin-bottom">
+						<h6 class="ion-no-margin d-flex ion-align-items-center mb-1 lh-0">
+							<div class="flex-1 p-relative d-flex ion-align-items-center" style="height: 16px;">
+								<b *ngIf="loadingNoSoal == 0">Soal {{i + 1}}</b>
+								<div *ngIf="loadingNoSoal == 1" class="p-absolute d-flex ion-align-items-center c-primary">
+									<ion-spinner name="dots" color="primary" class="mr-05"></ion-spinner>
+									<small>mengurutkan soal</small>
+								</div>
+							</div>
+							<ion-icon [routerLink]="['/pemateri/pelajaran/cu', {jenis: 'soal', update: true, idMateri: dataMateri?._id, idSoal: s._id}]" name="create-outline" class="mr-05"></ion-icon>
+							<ion-icon name="trash-outline" color="danger" class="ml-05" (click)="hapusSoal(i, s._id)"></ion-icon>
+						</h6>
+						<div class="mb-2">{{s.deskripsi}}</div>
+						<div>
+							<div *ngFor="let j of s.jawaban" class="d-flex ion-align-items-center py-05 px-1 border border-card mb-1" [ngClass]="j._id == s.pilihan? 'border-c-primary c-primary' : ''">
+								<div class="d-inherit w-3 flex-shrink-0 mh-26">
+									<ion-checkbox *ngIf="j._id == s.pilihan" [checked]="s.pilihan == j._id"></ion-checkbox>
+								</div>
+								<div>{{j.deskripsi}}</div>
+							</div>
+						</div>
+					</div>
+				</ion-card>
+
+				<ion-card *ngIf="!dataMateri?.soal || dataMateri?.soal?.length < 1" mode="ios" class="ion-no-margin ion-padding">
+					<div class="ion-text-center">
+						<div class="c-medium-tint mb-05">{{loadingSoal == 1? 'Memuat Soal...' : loadingSoal == 2? 'Gagal memuat Soal. Pilih pelatihan dan coba lagi' : 'Soal kosong, silahkan pilih pelatihan dan tambahkan soal.'}}</div>
+						<ion-button *ngIf="loadingSoal == 0" [routerLink]="['/pemateri/pelajaran/cu', {jenis: 'soal', idMateri: dataMateri?._id}]" color="primary" size="small">+ Tambah {{jenisMateri[dataMateri?.jenis]?.jenis}}</ion-button>
+						<ion-spinner *ngIf="loadingSoal == 1" name="lines"></ion-spinner>
+						<ion-button *ngIf="loadingSoal == 2" mode="ios" size="small" color="warning" (click)="ambilSoal(dataMateri._id)">Coba Lagi</ion-button>
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+
+	<ion-fab [routerLink]="['/pemateri/pelajaran/cu', {jenis: 'soal', idMateri: idMateri}]" mode="ios" vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button class="w-5 border-round mr-1 mb-1 h-2-5r">
+      <ion-icon name="add"></ion-icon> <b>Soal</b>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

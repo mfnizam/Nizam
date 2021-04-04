@@ -1,0 +1,45 @@
+<ion-content class="ion-padding-top ion-padding-bottom">
+	<ion-grid class="px-0">
+		<ion-row class="mb-1 ion-padding-start ion-padding-end">
+			<ion-col>
+				<div class="header-title">Daftar Pelatihan</div>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-searchbar mode="ios" placeholder="Cari Test Atau Materi" class="contain-unset h-auto ion-no-padding ion-padding-start ion-padding-end mb-2"></ion-searchbar>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col class="ion-no-padding">
+				<div class="mb-1 ion-padding-start ion-padding-end o-auto">
+					<div class="pl-gc pr-gc">
+						<div class="d-table-cell">
+							<ion-select mode="ios" interface="action-sheet" [interfaceOptions]="{ header: 'Mau lihat status apa?' }"[(ngModel)]="jenis" class="border border-card py-05 px-1 slide-pembelian mr-1">
+								<ion-select-option value="semua">Semua Pelatihan</ion-select-option>
+								<ion-select-option value="anda">Pelatihan Anda</ion-select-option>
+								<ion-select-option value="baru">Pelatihan Baru</ion-select-option>
+							</ion-select>
+						</div>
+
+						<div class="d-table-cell">
+							<ion-select mode="ios" interface="action-sheet" [interfaceOptions]="{ header: 'Mau lihat status apa?' }" [(ngModel)]="status" class="border border-card py-05 px-1 slide-pembelian mr-1">
+								<ion-select-option value="semua">Semua Status</ion-select-option>
+								<ion-select-option value="pembayaran">Menunggu Pembayaran</ion-select-option>
+								<ion-select-option value="konfirmasi">Menunggu Konfirmasi</ion-select-option>
+								<ion-select-option value="konfirmasi">Berhasil Terdaftar</ion-select-option>
+							</ion-select>
+						</div>
+					</div>
+				</div>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-padding-start ion-padding-end">
+			<ion-col size="6" *ngFor="let u of [1,2,3,4,5]">
+				<ion-card mode="ios" class="ion-no-margin">
+					<ion-img style="pointer-events:none" src="https://via.placeholder.com/150"></ion-img>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>

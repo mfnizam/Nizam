@@ -1,0 +1,117 @@
+<ion-content class="ion-padding">
+	<ion-grid>
+		<ion-row class="header-title ion-margin-bottom ion-align-items-center">
+			<ion-col size="auto" class="d-none back-btn">
+				<ion-icon name="arrow-back" (click)="goBack()"></ion-icon>
+			</ion-col>
+			<ion-col>{{dataPembayaran?.status == 2? 'Detail' : 'Selesaikan'}} Pembayaran</ion-col>
+		</ion-row>
+		<ion-row *ngIf="dataPembayaran?.status != 2">
+			<ion-col>
+				<h3 class="ion-no-margin mb-1 opacity-2"><b>Transfer Pembayaran Ke</b></h3>
+				<ion-card mode="ios" class="ion-no-margin ion-padding ion-margin-bottom">
+					<div class="d-flex ion-align-items-center ion-margin-bottom">
+						<div class="flex-shrink-0 opacity-4">Nama Bank</div>
+						<div class="flex-1 ion-text-right">
+							<h4 class="ion-no-margin"><b>Bank BRI</b></h4>
+						</div>
+					</div>
+					<div class="d-flex ion-align-items-center ion-margin-bottom">
+						<div class="flex-shrink-0 opacity-4">
+							No Rekening<br>
+							<small class="c-primary">(<u>Salin No.Rek</u>)</small>
+						</div>
+						<div class="flex-1 ion-text-right">
+							<h4 class="ion-no-margin"><b>01236912359185231</b></h4>
+						</div>
+					</div>
+					<div class="d-flex ion-align-items-center mb-2">
+						<div class="flex-shrink-0 opacity-4">
+							Total<br>
+							<small class="c-primary">(<u>Salin Total</u>)</small>
+						</div>
+						<div class="flex-1 ion-text-right c-primary">
+							<h4 class="ion-no-margin"><b>Rp. {{dataPembayaran?.nominal | currency:' ':'symbol':'.0':'id'}}{{dataPembayaran?.nominal? '' : 0}},-</b></h4>
+						</div>
+					</div>
+					<div>
+						<ion-button expand="full" shape="round" (click)="unggahBuktiPembayaran()">Unggah Bukti Pembayaran</ion-button>
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<h3 class="ion-no-margin mb-1 opacity-2"><b>Informasi Umum</b></h3>
+				<ion-card mode="ios" class="ion-no-margin ion-padding ion-margin-bottom">
+					<div class="d-flex ion-align-items-center mb-1">
+						<div class="flex-shrink-0 opacity-4">No Invoice</div>
+						<div class="flex-1 ion-text-right text-max text-max-2">
+							<b>{{dataPembayaran?.invoice || '-'}}</b>
+						</div>
+					</div>
+					<div class="d-flex ion-align-items-center" [class.mb-1]="dataPembayaran?.status == 2"> 
+						<div class="flex-shrink-0 opacity-4">Status</div>
+						<div class="flex-1 ion-text-right">
+							<ion-chip outline [color]="dataPembayaran?.status == 1? 'warning' : dataPembayaran?.status == 2? 'success' : 'danger' ">
+								<ion-icon *ngIf="dataPembayaran?.status == 2" name="checkmark"></ion-icon>
+								<ion-label>{{dataPembayaran?.status == 1? 'Verifikasi' : dataPembayaran?.status == 2? 'Lunas' : 'Belum Lunas' }}</ion-label>
+							</ion-chip>
+						</div>
+					</div>
+					<div *ngIf="dataPembayaran?.status == 2" class="d-flex ion-align-items-center mb-2">
+						<div class="flex-shrink-0 opacity-4">Tgl Pelunasan</div>
+						<div class="flex-1 ion-text-right">
+							<h4 class="ion-no-margin"><b>{{dataPembayaran?.waktuPelunasan || '-'}}</b></h4>
+						</div>
+					</div>
+					<div *ngIf="dataPembayaran?.status == 2">
+						<ion-button expand="full" shape="round">Lihat Bukti Pembayaran</ion-button>
+						<!-- <div class="flex-shrink-0 opacity-4">Bukti Pembayaran</div> -->
+						<!-- <div class="flex-1 ion-text-right">
+							<u class="c-primary">Lihat Bukti Pembayaran</u>
+						</div> -->
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<h3 class="ion-no-margin mb-1 opacity-2"><b>Detail Tagihan</b></h3>
+				<div *ngIf="dataPembayaran?.tagihan?.length > 0">
+					<ion-card *ngFor="let t of dataPembayaran?.tagihan" size="12" mode="ios" class="ion-no-margin ion-padding ion-margin-bottom border-avatar">
+						<!-- <div [routerLink]="['/public/bayar/detail', {id: t._id, idSiswa: t.siswaBackup?._id}]"> -->
+						<div>
+							<div class="d-flex ion-align-items-start mb-2">
+								<h4 class="ion-no-margin flex-1 text-max text-max-1"><b>{{t.title || '-'}}</b></h4>
+							</div>
+							<div class="d-flex ion-align-items-center flex-wrap mb-2">
+								<ion-avatar class="flex-shrink-0 mr-2 border-avatar">
+									<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg">
+								</ion-avatar>
+								<div class="flex-1">
+									<div class="text-max text-max-1 ion-text-capitalize"><b>{{t.siswaBackup?.namaLengkap || '-'}}</b></div>
+									<div>{{t.kelasBackup?.title || t.kelas?.title}}</div>
+								</div>
+								<div class="flex-shrink-0">
+									<ion-chip class="ion-no-margin" color="primary">
+										<ion-label><small>Rp. </small><b>{{t.nominal | currency:' ':'symbol':'.0':'id'}},-</b></ion-label>
+									</ion-chip>	
+								</div>
+							</div>
+							<p class="text-max text-max-1">{{t.deskripsi || '-'}}</p>
+						</div>
+						<div class="d-flex ion-align-items-end">
+							<div class="mr-1 flex-1 text-max text-max-2">
+								Kategori: <b class="ion-text-capitalize">{{t.kategoriBackup?.title || t.kategori?.title}}</b>
+							</div>
+						</div>
+					</ion-card>
+				</div>
+				<ion-card *ngIf="dataPembayaran?.tagihan?.length < 1" mode="ios" class="ion-no-margin ion-padding ion-text-center">
+					Tidak Ada Data Tagihan
+				</ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>

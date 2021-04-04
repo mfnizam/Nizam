@@ -1,0 +1,118 @@
+<ion-content class="ion-padding-top ion-padding-bottom">
+	<ion-grid class="px-0">
+		<ion-row class="header-title mb-1 ion-padding-start ion-padding-end">
+			<ion-col class="text-max text-max-1 wp-nowrap">Daftar Pelatihan</ion-col>
+			<ion-col [routerLink]="['cu']" size="auto">
+				<ion-note color="primary">+ Tambah</ion-note>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-searchbar mode="ios" placeholder="Cari Pelatihan" class="contain-unset h-auto ion-no-padding ion-padding-start ion-padding-end mb-2"></ion-searchbar>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col class="ion-no-padding">
+				<div class="mb-1 ion-padding-start ion-padding-end o-auto">
+					<div class="pl-gc pr-gc">
+						<div class="d-table-cell">
+							<ion-select mode="ios" interface="action-sheet" [interfaceOptions]="{ header: 'Mau lihat status apa?' }"[(ngModel)]="status" class="border border-card py-05 px-1 slide-pembelian mr-1">
+								<ion-select-option value="semua">Semua Status</ion-select-option>
+								<ion-select-option value="pendaftaran">Pendaftaran</ion-select-option>
+								<ion-select-option value="berlangsung">Sedang Berlangsung</ion-select-option>
+								<ion-select-option value="selesai">Selesai</ion-select-option>
+							</ion-select>
+						</div>
+
+						<div class="d-table-cell">
+							<ion-select mode="ios" interface="action-sheet" [interfaceOptions]="{ header: 'Mau lihat status apa?' }" [(ngModel)]="tanggal" class="border border-card py-05 px-1 slide-pembelian mr-1">
+								<ion-select-option value="semua">Waktu Pelaksanaan</ion-select-option>
+								<ion-select-option value="konfirmasi">Semua Tanggal</ion-select-option>
+								<ion-select-option value="pembayaran">30 Hari Terakhir</ion-select-option>
+								<ion-select-option value="konfirmasi">90 Hari Terakhir</ion-select-option>
+							</ion-select>
+						</div>
+					</div>
+				</div>
+			</ion-col>
+		</ion-row>
+		<ion-row class="mb-1 ion-padding-start ion-padding-end">
+			<ion-col>
+				<div #pelatihanList *ngFor="let t of dataPelatihan; let i = index;">
+					<ion-card mode="ios" class="ion-no-margin ion-padding ion-margin-bottom border-avatar">
+						<div class="mb-1">
+							<h4 class="ion-no-margin d-flex ion-align-items-center">
+								<b class="flex-1 text-max text-max-1 ion-text-capitalize mr-1">{{t.nama}}</b>
+								<ion-icon [routerLink]="['cu', {id: t._id, update: true}]" name="create-outline" class="mr-1"></ion-icon>
+								<ion-icon name="trash-outline" color="danger" (click)="hapusPelatihan(t, i)"></ion-icon>
+							</h4>
+						</div>
+						<div [routerLink]="['detail', {id: t._id}]">
+							<div class="d-flex ion-align-items-center flex-wrap mb-1">
+								<div class="flex-1 opacity-3"><b>Pendaftaran</b></div>
+								<div class="mr-05">:</div>
+								<div class="flex-2 flex-shrink-0">
+									<b>{{t.tglPendaftaranMulai | date: 'dd MMM yyy'}} - {{t.tglPendaftaranAkhir | date: 'dd MMM yyy'}}</b>
+								</div>
+							</div>
+							<div class="d-flex ion-align-items-center flex-wrap mb-1">
+								<div class="flex-1 opacity-3"><b>Pelaksanaan</b></div>
+								<div class="mr-05">:</div>
+								<div class="flex-2 flex-shrink-0">
+									<b>{{t.tglPelaksanaanMulai | date: 'dd MMM yyy'}} - {{t.tglPelaksanaanAkhir | date: 'dd MMM yyy'}}</b>
+								</div>
+							</div>
+							<div class="d-flex ion-align-items-center flex-wrap mb-1">
+								<div class="flex-1 opacity-3"><b>Tingkatan</b></div>
+								<div class="mr-05">:</div>
+								<div class="flex-2 flex-shrink-0">
+									<b>{{t.tingkatan?.title || '-'}}</b>
+								</div>
+							</div>
+							<div class="d-flex ion-align-items-center flex-wrap mb-1">
+								<div class="flex-1 opacity-3"><b>Jumlah Pemateri</b></div>
+								<div class="mr-05">:</div>
+								<div class="flex-2 flex-shrink-0">
+									<b>{{t.pemateri?.length || 0}} Pemateri</b>
+								</div>
+							</div>
+							<div class="d-flex ion-align-items-center flex-wrap mb-1">
+								<div class="flex-1 opacity-3"><b>Jumlah Peserta</b></div>
+								<div class="mr-05">:</div>
+								<div class="flex-2 flex-shrink-0">
+									<b>{{t.tingkatan?.peserta?.length || 0}}</b>
+								</div>
+							</div>
+							<div class="d-flex ion-align-items-center flex-wrap mb-2">
+								<div class="flex-1 opacity-3"><b>Biaya Pendaftaran</b></div>
+								<div class="mr-05">:</div>
+								<div class="flex-2 flex-shrink-0">
+									<ion-chip class="ion-no-margin" color="primary">
+										<ion-label><small>Rp. </small><b>{{t.biaya | currency:' ':'symbol':'.0':'id'}},-</b></ion-label>
+									</ion-chip>	
+								</div>
+							</div>
+							<div *ngIf="t.deskripsi">
+								<div class="mb-05 opacity-3"><b>Deskripsi</b></div>
+								<p class="ion-no-margin text-max text-max-3">{{t.deskripsi}}</p>
+							</div>
+							<ion-chip *ngIf="t.status && t.status > -1" class="ion-no-margin mt-2" color="primary">
+								<ion-label><b>{{t.status || '-'}}</b></ion-label>
+							</ion-chip>	
+						</div>
+					</ion-card>
+				</div>
+				<ion-card *ngIf="dataPelatihan.length < 1 || (dataPelatihan.length < 1 && pelatihanLoading > 0)" mode="ios" class="ion-no-margin ion-padding o-hidden h-6r">
+					<div class="ion-text-center">
+						<h6 class="ion-no-margin mb-1 c-medium-tint">
+							{{pelatihanLoading == 1? 'Memuat Data Pelatihan..' : pelatihanLoading == 0? 'Data Pelatihan Kosong' : 'Gagal Memuat Data Pelatihan'}}
+						</h6>
+						<ion-button routerLink="cu" *ngIf="pelatihanLoading == 0" mode="ios" size="small" color="primary">Tambah Pelatihan</ion-button>
+						<ion-spinner *ngIf="pelatihanLoading == 1" name="lines"></ion-spinner>
+						<ion-button *ngIf="pelatihanLoading == 2" mode="ios" size="small" color="warning" (click)="ambilPelatihan()">Coba Lagi</ion-button>
+					</div>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>

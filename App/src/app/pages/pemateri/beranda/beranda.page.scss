@@ -1,0 +1,15 @@
+:host{
+
+	ion-content{
+
+		.kategori{
+			ion-card{
+				height: 6rem;
+				display: flex;
+				align-items: center;
+				font-size: 12pt;
+				border-top: 2px var(--ion-color-primary) solid;
+			}
+		}
+	}
+}

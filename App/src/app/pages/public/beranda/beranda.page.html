@@ -1,0 +1,58 @@
+<ion-content class="ion-padding-top ion-padding-bottom">
+	<ion-grid class="px-0">
+		<ion-row class="ion-align-items-center mb-1 ion-padding-start ion-padding-end">
+			<ion-col size="auto">
+				<ion-avatar [routerLink]="['/public/akun']" class="border-avatar">
+					<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg">
+				</ion-avatar>
+			</ion-col>
+			<ion-col>
+				<div class="mb-05">
+					<b><span class="ion-text-capitalize">{{userData?.namaLengkap}}</span></b>
+				</div>
+				<div>
+					<!-- <small class="c-medium-tint">Pelatihan Yang Sedang Aktif</small> -->
+					<div class="border c-medium-tint border-card p-1 d-flex ion-align-items-center">
+						<div class="flex-1 text-max text-max-1">Tidak Ada Pelatihan Yang Aktif</div>
+						<ion-icon name="chevron-down"></ion-icon>
+					</div>
+				</div>
+				<!-- <h3 class="ion-no-margin ion-text-capitalize">{{userData?.namaLengkap}}</h3> -->
+			</ion-col>
+		</ion-row>
+
+		<ion-row class="ion-padding-start ion-padding-end mb-05">
+			<ion-col class="d-flex ion-align-items-start">
+				<h4 class="flex-1 ion-no-margin c-medium-tint mr-1"><b>Daftar Pelatihan Baru</b></h4>
+				<ion-note [routerLink]="['/public/list/tagihan', { filter: 'tagihan' }]" color="primary" class="flex-shrink-0 pt-05">Lihat Semua (10)</ion-note>
+			</ion-col>
+		</ion-row>
+		<ion-row class="mb-1">
+			<ion-col class="ion-no-padding">
+				<ion-slides [options]="{ slidesPerView: 2.5}" class="ion-padding-start ion-padding-bottom ion-padding-end o-visible">
+					<ion-slide *ngFor="let card of [0,1,2,3]; let l = last" class="pl-gc pr-gc">
+						<ion-card mode="ios" class="ion-no-margin w-100">
+							<div class="p-relative pb-100">
+								<ion-img style="pointer-events:none" src="https://via.placeholder.com/150" class="p-absolute w-100 h-100 of-cover"></ion-img>
+							</div>
+						</ion-card>
+					</ion-slide>
+				</ion-slides>
+			</ion-col>
+		</ion-row>
+
+		<ion-row class="ion-padding-start ion-padding-end">
+			<ion-col class="d-flex ion-align-items-start">
+				<h4 class="flex-1 ion-no-margin c-medium-tint"><b>Aktifitas Anda</b></h4>
+				<ion-note [routerLink]="['/public/list/tagihan', { filter: 'tagihan' }]" color="primary" class="flex-shrink-0 pt-05">Lihat Semua (10)</ion-note>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-padding-start ion-padding-end">
+			<ion-col size="6" *ngFor="let u of [1,2,3,4,5]">
+				<ion-card mode="ios" class="ion-no-margin">
+					<ion-img style="pointer-events:none" src="https://via.placeholder.com/150"></ion-img>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>

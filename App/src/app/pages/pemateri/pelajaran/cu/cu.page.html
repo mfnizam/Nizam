@@ -1,0 +1,79 @@
+<ion-content class="ion-padding-top ion-padding-bottom">
+	<ion-grid class="px-0">
+		<ion-row class="header-title mb-1 ion-padding-start ion-padding-end ion-margin-bottom ion-align-items-center">
+			<ion-col size="auto" class="d-none back-btn">
+				<ion-icon name="arrow-back" (click)="goBack()"></ion-icon>
+			</ion-col>
+			<ion-col class="ion-text-capitalize">{{update? 'Edit' : 'Tambah'}} {{jenis}}</ion-col>
+			<ion-col size="auto">
+				<button form="formmateri" class="ion-no-padding ion-no-margin b-none d-flex ion-align-items-center ion-justify-content-center" [disabled]="form.invalid">
+					<ion-note color="primary" [style.opacity]="form.invalid? 0.2 : 1">
+						<h4 class="ion-no-margin">{{jenis == 'materi'? 'Selanjutnya' : 'Simpan'}}</h4>
+					</ion-note>
+					<ion-spinner *ngIf="isLoading" color="primary" class="p-absolute"></ion-spinner>
+				</button>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-padding-start ion-padding-end">
+			<ion-col>
+				<form [formGroup]="form" id="formmateri" (ngSubmit)="simpan()">
+					<div *ngIf="jenis == 'materi'">
+						<ion-item class="ion-no-padding ion-margin-bottom">
+							<ion-label color="primary" position="floating">Jenis</ion-label>
+							<!-- <ion-input autofocus formControlName="nama" placeholder="Tulis Nama Materi"></ion-input> -->
+							<ion-select formControlName="jenis" placeholder="Pilih jenis konten">
+								<ion-select-option [value]="1">Pre Test</ion-select-option>
+								<ion-select-option [value]="2">Post Test</ion-select-option>
+								<ion-select-option [value]="3">Remidi Post Test</ion-select-option>
+								<ion-select-option [value]="4">Materi</ion-select-option>
+								<ion-select-option [value]="5">Lain-lain</ion-select-option>
+							</ion-select>
+						</ion-item>
+						<ng-container *ngIf="form.controls['jenis'].value < 4 && form.controls['jenis'].value > 0">
+							<ion-item class="ion-no-padding ion-margin-bottom">
+								<ion-label color="primary" position="floating" class="ion-text-capitalize">Tgl Pelaksanaan Test</ion-label>
+								<ion-datetime formControlName="tglPelaksanaan" displayFormat="DD MMM YYYY" placeholder="Tulis tgl pelaksanaan test"></ion-datetime>
+							</ion-item>
+
+							<ion-item class="ion-no-padding ion-margin-bottom">
+								<ion-label color="primary" position="floating" class="ion-text-capitalize">Waktu Mulai Test</ion-label>
+								<ion-datetime formControlName="waktuPelaksanaanMulai" displayFormat="HH:mm" placeholder="Tulis waktu test dapat dimulai"></ion-datetime>
+							</ion-item>
+
+							<ion-item class="ion-no-padding ion-margin-bottom">
+								<ion-label color="primary" position="floating" class="ion-text-capitalize">Waktu Akhir Test</ion-label>
+								<ion-datetime formControlName="waktuPelaksanaanAkhir" displayFormat="HH:mm" placeholder="Tulis waktu test harus berakhir"></ion-datetime>
+							</ion-item>
+
+							<ion-item class="ion-no-padding ion-margin-bottom">
+								<ion-label color="primary" position="floating" class="ion-text-capitalize">Durasi Test (Jam:Menit)</ion-label>
+								<ion-datetime formControlName="durasiPelaksanaan" displayFormat="HH:mm" hourValues="00,01,02,03,04,05" minuteValues="0,15,30,45" placeholder="Tulis durasi pengerjaan test"></ion-datetime>
+							</ion-item>
+						</ng-container>
+					</div>
+					<div *ngIf="jenis == 'soal'">
+						<ion-item class="ion-no-padding ion-margin-bottom">
+							<ion-label position="floating">Deskripsi Soal</ion-label>
+							<ion-textarea formControlName="soalDeskripsi" autoGrow="true" placeholder="Tuliskan soal"></ion-textarea>
+						</ion-item>
+						<div *ngIf="form.controls.soalJawaban.value?.length > 0" class="mb-1 mt-1">
+							<div *ngFor="let j of form.controls.soalJawaban.value" class="p-1 border border-card mb-1 d-flex ion-align-items-center" [ngClass]="form.controls.soalPilihan?.value == j._id? 'border-c-primary c-primary' : ''">
+								<div class="flex-1 mr-1" style="word-break: break-all;" (click)="pilihJawaban(j._id)">{{j.deskripsi}}</div>
+								<ion-checkbox mode="ios" [checked]="form.controls.soalPilihan?.value == j._id" class="mr-1 flex-shrink-0" (click)="pilihJawaban(j._id)"></ion-checkbox>
+								<h4 class="ion-no-margin d-flex ion-align-items-center">
+									<ion-icon name="trash-outline" color="danger" class="mr-0" (click)="hapusJawaban(j._id)"></ion-icon>
+								</h4>
+							</div>
+						</div>
+						<ion-button mode="ios" color="primary" class="w-100" (click)="cuJawaban()">+ Tambah Jawaban</ion-button>
+						<small *ngIf="form.controls.soalJawaban.value?.length > 0" class="opacity-3">Klik jawaban untuk menjadikan sebagai kunci jawaban</small>
+						<!-- <ion-item class="ion-no-padding ion-margin-bottom">
+							<ion-label position="floating">Deskripsi Soal</ion-label>
+							<ion-input placeholder="Tuliskan soal"></ion-input>
+						</ion-item> -->
+					</div>
+				</form>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>

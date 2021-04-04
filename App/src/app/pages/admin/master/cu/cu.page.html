@@ -1,0 +1,113 @@
+<ion-content class="ion-padding">
+	<ion-grid>
+		<ion-row class="header-title ion-margin-bottom ion-align-items-center">
+			<ion-col size="auto" class="d-none back-btn">
+				<ion-icon name="arrow-back" (click)="goBack()"></ion-icon>
+			</ion-col>
+			<ion-col class="ion-text-capitalize text-max text-max-1 wp-nowrap">{{update? 'Edit' : 'Tambah'}} {{jenis}}</ion-col>
+			<ion-col size="auto">
+				<button form="form" class="ion-no-padding ion-no-margin b-none d-flex ion-align-items-center ion-justify-content-center" [disabled]="form.invalid">
+					<ion-note color="primary" [style.opacity]="form.invalid? 0.2 : 1"><h4 class="ion-no-margin">Simpan</h4></ion-note>
+				</button>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<form [formGroup]="form" id="form" (ngSubmit)="simpan()">
+					<div class="d-flex ion-align-items-center ion-justify-content-center ion-margin-bottom mb-2">
+						<div class="p-relative w-50 pt-50p border-50p o-hidden">
+							<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg" class="p-absolute t-0">
+							<div class="p-absolute w-100 h-100 t-0 b-dark-30p"></div>
+						</div>
+						<ion-button mode="ios" class="p-absolute">Upload Foto</ion-button>
+					</div>
+
+					<ion-item class="ion-no-padding ion-margin-bottom">
+						<ion-label color="primary" position="floating" class="ion-text-capitalize">Nama Lengkap {{jenis}}*</ion-label>
+						<ion-input autofocus formControlName="namaLengkap" type="text" placeholder="Tulis nama {{jenis}}"></ion-input>
+					</ion-item>
+
+					<ion-item class="ion-no-padding ion-margin-bottom">
+						<ion-label [color]="form.controls?.email.errors?.terdaftar? 'danger' : 'primary'" position="floating" class="ion-text-capitalize">Email* <span *ngIf="form.controls?.email.errors?.terdaftar"> - Email Sudah Terdaftar</span></ion-label>
+						<ion-input formControlName="email" type="text" placeholder="Tulis email pemateri"></ion-input>
+					</ion-item>
+
+					<ion-item *ngIf="!dataMaster?.hasPassword" class="ion-no-padding ion-margin-bottom">
+						<ion-label color="primary" position="floating" class="ion-text-capitalize">Password*</ion-label>
+						<ion-input formControlName="password" type="password" placeholder="{{dataMaster?.hasPassword? 'Ganti' : 'Isikan'}} password pemateri"></ion-input>
+					</ion-item>
+
+					<ion-item class="ion-no-padding ion-margin-bottom">
+						<ion-label color="primary" position="floating" class="ion-text-capitalize">No KTA Pramuka*</ion-label>
+						<ion-input formControlName="noKta" type="number" placeholder="Tulis no KTA pemateri"></ion-input>
+					</ion-item>
+
+					<ion-item class="ion-no-padding ion-margin-bottom">
+						<ion-label color="primary" position="floating" class="ion-text-capitalize">Kwarcab*</ion-label>
+						<ion-input formControlName="kwarcab" placeholder="Tulis kwarcab pemateri"></ion-input>
+					</ion-item>
+
+					<ion-item class="ion-no-padding ion-margin-bottom">
+						<ion-label color="primary" position="floating" class="ion-text-capitalize">Jenis Kelamin*</ion-label>
+						<ion-select formControlName="jenisKelamin" placeholder="Pilih jenis kelamin {{jenis}}">
+							<ion-select-option [value]="1">Laki - laki</ion-select-option>
+							<ion-select-option [value]="0">Perempuan</ion-select-option>
+						</ion-select>
+					</ion-item>
+
+					<ion-item class="ion-no-padding ion-margin-bottom">
+						<ion-label color="primary" position="floating" class="ion-text-capitalize">Tgl Lahir</ion-label>
+						<ion-datetime formControlName="tglLahir" displayFormat="DD MMM YYYY" placeholder="Tulis tgl lahir pemateri"></ion-datetime>
+					</ion-item>
+
+					<ion-item class="ion-no-padding ion-margin-bottom">
+						<ion-label color="primary" position="floating" class="ion-text-capitalize">noTlp</ion-label>
+						<ion-input formControlName="noTlp" type="tel" placeholder="Tulis noTlp pemateri"></ion-input>
+					</ion-item>
+
+					<ion-item class="ion-no-padding ion-margin-bottom">
+						<ion-label color="primary" position="floating" class="ion-text-capitalize">Alamat</ion-label>
+						<ion-textarea formControlName="alamat" type="text" placeholder="Tulis alamat pemateri"></ion-textarea>
+					</ion-item>
+
+					<ion-item *ngIf="dataMaster?.hasPassword && gantiPass" class="ion-no-padding ion-margin-bottom">
+						<ion-label color="primary" position="floating" class="ion-text-capitalize">{{dataMaster?.hasPassword? 'Ganti' : ''}} Password {{dataMaster?.hasPassword? '' : '*'}}</ion-label>
+						<ion-input formControlName="password" type="password" placeholder="{{dataMaster?.hasPassword? 'Ganti' : 'Isikan'}} password pemateri"></ion-input>
+					</ion-item>
+
+					<div *ngIf="dataMaster?.hasPassword">
+						<ion-button color="primary" size="small" fill="outline" (click)="gantiPass = !gantiPass">{{gantiPass? 'Batal' : ''}} Ganti Password</ion-button>
+					</div>
+
+					<!-- <br>
+					<div class="ion-margin-bottom">
+						<div class="ion-text-capitalize mb-1"><h3 class="ion-no-margin"><b>Siswa</b></h3></div>
+						<div *ngIf="form.controls.siswa?.value.length > 0">
+							<ion-card *ngFor="let s of dataSiswaUi" mode="ios" class="ion-no-margin ion-margin-bottom ion-padding border no-shadow">	
+								<div class="d-flex align-items-center flex-wrap">
+									<ion-avatar class="ion-margin-end flex-shrink-0 border-avatar">
+										<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg">
+									</ion-avatar>
+									<div class="flex-1">
+										<div class="text-max text-max-1 ion-text-capitalize"><b>{{s.namaLengkap || '-'}}</b></div>
+										<div class="text-max text-max-1 ion-text-capitalize"><small><ion-note color="primary">{{s.kelas?.title}}</ion-note> - {{s.nisn}}</small></div>
+									</div>
+									<div class="flex-shrink-0">
+										<h2 class="ion-no-margin">
+											<ion-icon name="trash-outline" color="danger" (click)="hapusSiswa(s._id)"></ion-icon>
+										</h2>
+									</div>
+								</div>
+							</ion-card>
+						</div>
+						<div>
+							<ion-button mode="ios" size="small" color="primary" (click)="pilihSiswa()">
+								{{form.controls.siswa?.value.length < 1? 'Pilih' : '+ Tambah'}} Siswa
+							</ion-button>
+						</div>
+					</div> -->
+				</form>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>
