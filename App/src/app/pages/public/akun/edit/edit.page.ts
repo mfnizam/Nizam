@@ -9,8 +9,7 @@ import { UserService } from '../../../../services/user/user.service';
 
 @Component({
   selector: 'app-edit',
-  templateUrl: './edit.page.html',
-  styleUrls: ['./edit.page.scss'],
+  templateUrl: './edit.page.html'
 })
 export class EditPage {
 	userData: any; 

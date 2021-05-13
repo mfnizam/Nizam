@@ -1,31 +1,32 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
+import { File } from '@ionic-native/file/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
 
 import { Capacitor } from '@capacitor/core';
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServerService {
 
-  // public serverUrl = 'https://projek-satu.herokuapp.com/nizam';
-  public serverUrl = 'http://192.168.0.100:3000/nizam/';
-  // public serverUrl = 'http://10.209.25.230:3000/nizam';
-  // public serverUrl = 'http://192.168.1.111:3000/nizam/';
+  public serverUrl = 'https://projectkabeh.herokuapp.com/nizam/';
+  // public serverUrl = 'http://192.168.8.103:3000/nizam/'; //F4
+  // public serverUrl = 'http://192.168.43.64:3000/nizam/'
 
-  public otherServer = 'https://mfnizam.com/apps/projekkabeh/'
+  public otherServer = 'https://mfnizam.com/apps/projectkabeh/'
 
   constructor(
     private http: HTTP,
     private httpClient: HttpClient,
-    private transfer: FileTransfer) { }
+    private transfer: FileTransfer,
+    private file: File) { }
 
-  getRequest(url){
-  	return this.httpClient.get(url);
+  getRequest(url, opt?){
+    let header = {}
+    return this.httpClient.get(url, opt).toPromise();
   }
 
   postRequest(url, data){
@@ -35,6 +36,36 @@ export class ServerService {
       .then(res => { return JSON.parse(res.data) })
     }else{
     	return this.httpClient.post(url, data).toPromise().then((data : any) => { return data;})
+    }
+  }
+
+  async uploadRequest(url, fileUrl, fileName, mime = "image/jpeg", params){
+    if(Capacitor.isNative){
+      return this.transfer.create().upload(fileUrl, url, {
+        fileKey: 'file',
+        fileName: fileName,
+        chunkedMode: false,
+        mimeType: mime,
+        params : params,
+        headers: {}
+      })
+      .then(res => { return JSON.parse(res.response) })
+    }else{
+      let file = await fetch(fileUrl).then(r => r.blob());
+      let formData = new FormData();
+      formData.append('file', file, (fileName? fileName : 'file-upload'));
+      for(let k in params){
+        formData.append(k, params[k]);
+      }
+      return this.postRequest(url, formData); 
+    }
+  }
+
+  async downloadRequest(url, nama){
+    if(Capacitor.isNative){
+      return this.transfer.create().download(url, this.file.externalRootDirectory + '/Download/' + nama);
+    }else{
+      //kurang download non native
     }
   }
 
@@ -124,6 +155,14 @@ export class ServerService {
     let url = this.serverUrl + 'api/admin/pelatihan/edit';
     return this.postRequest(url, data);
   }
+  public editPemateriPelatihan(data){
+    let url = this.serverUrl + 'api/admin/pelatihan/pemateri/edit';
+    return this.postRequest(url, data);
+  }
+  public editPesertaPelatihan(data){
+    let url = this.serverUrl + 'api/admin/pelatihan/peserta/edit';
+    return this.postRequest(url, data);
+  }
   
 
   // public api
@@ -148,14 +187,26 @@ export class ServerService {
     let url = this.serverUrl + 'api/pelajaran/edit';
     return this.postRequest(url, data);
   }
+  public hasilPelajaran(data){
+    let url = this.serverUrl + 'api/pelajaran/hasil';
+    return this.postRequest(url, data);
+  }
+  public pengacakanPelajaran(data){
+    let url = this.serverUrl + 'api/pelajaran/pengacakan';
+    return this.postRequest(url, data);
+  }
 
   public materi(data){
     let url = this.serverUrl + 'api/materi';
     return this.postRequest(url, data);
   }
-  public tambahMateri(data){
+  public async tambahMateri(data, hasFile = false, fileUrl?, fileName?, mime?){
     let url = this.serverUrl + 'api/materi/tambah';
-    return this.postRequest(url, data);
+    if(hasFile){
+      return this.uploadRequest(url, fileUrl, fileName, mime, data)
+    }else{
+      return this.postRequest(url, data);
+    }
   }
   public hapusMateri(_id){
     let url = this.serverUrl + 'api/materi/hapus';
@@ -165,6 +216,11 @@ export class ServerService {
     let url = this.serverUrl + 'api/materi/edit';
     return this.postRequest(url, data);
   }
+  public async downloadMateri(url, nama){
+    // return await fetch(this.otherServer + url).then(r => r.blob());
+    return this.downloadRequest(this.otherServer + url, nama)
+  }
+
   public tambahSoalMateri(data){
     let url = this.serverUrl + 'api/materi/soal/tambah';
     return this.postRequest(url, data);
@@ -177,108 +233,16 @@ export class ServerService {
     let url = this.serverUrl + 'api/materi/soal/hapus';
     return this.postRequest(url, data);
   }
-
-  /*public ambilKelas(){
-    let url = this.serverUrl + 'api/admin/kelas';
-    return this.postRequest(url, {});
-  }
-  public tambahKelas(data){
-    let url = this.serverUrl + 'api/admin/kelas/tambah';
+  public pilihSoalMateri(data){
+    let url = this.serverUrl + 'api/materi/soal/pilih';
     return this.postRequest(url, data);
   }
-  public hapusKelas(_id){
-    let url = this.serverUrl + 'api/admin/kelas/hapus';
-    return this.postRequest(url, {_id});
-  }
-  public editKelas(data){
-    let url = this.serverUrl + 'api/admin/kelas/edit';
+  public pilihanSoalMateri(data){
+    let url = this.serverUrl + 'api/materi/soal/pilihan';
     return this.postRequest(url, data);
   }
-
-  public ambilRekening(){
-    let url = this.serverUrl + 'api/admin/rekening';
-    return this.postRequest(url, {});
+  public urutanSoalMateri(data){
+    let url = this.serverUrl + 'api/materi/soal/urutan';
+    return this.postRequest(url, data); 
   }
-  public tambahRekening(data){
-    let url = this.serverUrl + 'api/admin/rekening/tambah';
-    return this.postRequest(url, data);
-  }
-  public hapusRekening(_id){
-    let url = this.serverUrl + 'api/admin/rekening/hapus';
-    return this.postRequest(url, {_id});
-  }
-  public editRekening(data){
-    let url = this.serverUrl + 'api/admin/rekening/edit';
-    return this.postRequest(url, data);
-  }
-
-  public ambilTagihanPenerima(_id){
-    let url = this.serverUrl + 'api/admin/tagihan/penerima';
-    return this.postRequest(url, {_id});
-  }
-  public ambilTagihanPenerimaBelumLunas(_id){
-    let url = this.serverUrl + 'api/admin/tagihan/penerima/belumLunas';
-    return this.postRequest(url, {_id});
-  }
-  public ambilTagihanPenerimaLunas(_id){
-    let url = this.serverUrl + 'api/admin/tagihan/penerima/lunas';
-    return this.postRequest(url, {_id});
-  }
-
-  public ambilPembayaran(status: number[]){
-    let url = this.serverUrl + 'api/admin/pembayaran';
-    return this.postRequest(url, {status: status});
-  }
-  public editPembayaran(data){
-    let url = this.serverUrl + 'api/admin/pembayaran/bukti/verifikasi';
-    return this.postRequest(url, data);
-  }*/
-
-  //public api
-  /*public tagihan(idUser){
-    let url = this.serverUrl + 'api/tagihan';
-    return this.postRequest(url, {idUser});
-  }
-  public tagihanHistori(idUser){
-    let url = this.serverUrl + 'api/tagihan/histori';
-    return this.postRequest(url, {idUser});
-  }
-
-  public bayar(idUser){
-    let url = this.serverUrl + 'api/bayar';
-    return this.postRequest(url, {idUser});
-  }
-  public bayarTambah(idUser, idTagihan, idSiswa){
-    let url = this.serverUrl + 'api/bayar/tambah';
-    return this.postRequest(url, {idUser, idTagihan, idSiswa});
-  }
-  public bayarNanti(idUser, idTagihan, idSiswa){
-    let url = this.serverUrl + 'api/bayar/nanti';
-    return this.postRequest(url, {idUser, idTagihan, idSiswa});
-  }
-  public bayarPembayaran(idUser, rekening, bayar: Bayar[]){
-    let url = this.serverUrl + 'api/bayar/pembayaran';
-    return this.postRequest(url, {idUser, rekening, bayar})
-  }
-
-  public pembayaran(idUser){
-    let url = this.serverUrl + 'api/pembayaran';
-    return this.postRequest(url, {idUser})
-  }
-  public histori(idUser){
-    let url = this.serverUrl + 'api/pembayaran/histori';
-    return this.postRequest(url, {idUser})
-  }
-  public pembayaranBuktiUpload(imgUrl, fileName, params){
-    let url = this.serverUrl + 'api/pembayaran/bukti/upload'
-    return this.transfer.create().upload(imgUrl, url, {
-      fileKey: 'foto',
-      fileName: fileName,
-      chunkedMode: false,
-      mimeType: "image/jpeg",
-      params : params,
-      headers: {}
-    })
-    .then(res => { return JSON.parse(res.response) })
-  }*/
 }

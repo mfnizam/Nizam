@@ -25,7 +25,7 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: 'beranda',
+        redirectTo: 'aktifitas',
         pathMatch: 'full'
       }
     ]
@@ -35,13 +35,25 @@ const routes: Routes = [
     loadChildren: () => import('./akun/edit/edit.module').then( m => m.EditPageModule)
   },
   {
+    path: 'pelatihan/pilih',
+    loadChildren: () => import('./pelatihan/pilih/pilih.module').then( m => m.PilihPageModule)
+  },
+  {
+    path: 'aktifitas/detail',
+    loadChildren: () => import('./aktifitas/detail/detail.module').then( m => m.DetailPageModule)
+  },
+  {
+    path: 'aktifitas/soal',
+    loadChildren: () => import('./aktifitas/soal/soal.module').then( m => m.SoalPageModule)
+  },
+  {
     path: '',
-    redirectTo: 'beranda',
+    redirectTo: 'aktifitas',
     pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: 'beranda',
+    redirectTo: 'aktifitas',
   },
 ];
 

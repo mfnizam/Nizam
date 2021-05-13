@@ -1,0 +1,33 @@
+<ion-content class="ion-padding-top ion-padding-bottom">
+	<ion-grid class="px-0">
+		<ion-row class="header-title mb-1 ion-padding-start ion-padding-end ion-margin-bottom ion-align-items-center">
+			<ion-col size="auto" class="d-none back-btn">
+				<ion-icon name="arrow-back" (click)="goBack()"></ion-icon>
+			</ion-col>
+			<ion-col>
+				<div class="text-max text-max-1">Soal No {{noSoal}}</div>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-padding-start ion-padding-end ion-margin-bottom">
+			<ion-col>
+				<div class="opacity-3 mb-05">Deskripsi Soal</div>
+				<div>{{dataSoal?.deskripsi || '-'}}</div>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-padding-start ion-padding-end ion-margin-bottom">
+			<ion-col>
+				<div class="opacity-3 mb-05">Pilih Jawaban</div>
+				<div *ngIf="!dataSoal?.jawaban">-</div>
+				<div>
+					<div *ngFor="let j of dataSoal?.jawaban" class="d-flex ion-align-items-center py-05 px-1 border border-card mb-1" [ngClass]="j._id == dataSoal?.pilihan? 'border-c-primary c-primary' : ''" (click)="pilihJawaban(j._id)">
+						<div class="flex-1 mr-1" style="word-break: break-all;">{{j.deskripsi}}</div>
+						<ion-checkbox mode="ios" [checked]="j._id == dataSoal?.pilihan" disabled class="flex-shrink-0 opacity-5"></ion-checkbox>
+					</div>
+				</div>
+			</ion-col>
+		</ion-row>
+		<ion-row class="ion-padding-start ion-padding-end">
+			<ion-button mode="ios" color="primary" class="w-100" [disabled]="!dataSoal?.pilihan" (click)="simpan()">Simpan</ion-button>
+		</ion-row>
+	</ion-grid>
+</ion-content>

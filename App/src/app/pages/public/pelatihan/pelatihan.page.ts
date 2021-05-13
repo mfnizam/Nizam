@@ -7,8 +7,7 @@ import { ServerService } from '../../../services/server/server.service';
 
 @Component({
   selector: 'app-pelatihan',
-  templateUrl: './pelatihan.page.html',
-  styleUrls: ['./pelatihan.page.scss'],
+  templateUrl: './pelatihan.page.html'
 })
 export class PelatihanPage implements OnDestroy{
 	private destroy$: Subject<void> = new Subject<void>();

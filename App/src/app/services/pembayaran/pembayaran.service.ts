@@ -30,6 +30,8 @@ export class Pembayaran{
 	// waktuPelunasan: Date;
 	// rekening?: Rekening;
 	rekeningBackup?: any;
+	waktuPelunasan?: any;
+	tagihan?: any;
 }
 
 @Injectable({

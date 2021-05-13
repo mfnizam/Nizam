@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 
+
 export class User {
 	_id: string;
 	namaLengkap: string;
@@ -14,6 +15,12 @@ export class User {
 	imgUrl?: string;
 	isAdmin?: boolean;
 	status: number;
+	pilihan?: {
+		penilaian?: Boolean;
+		soal: string;
+		pilihan: string;
+	}[];
+	penilaian?: number;
 }
 
 @Injectable({

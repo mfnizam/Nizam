@@ -10,8 +10,8 @@
 		</ion-row>
 		<ion-row>
 			<ion-col>
-				<div class="user">
-					<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg">
+				<div class="d-flex ion-align-items-center ion-justify-content-center mb-1">
+					<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg" style="width: 100px; height: 100px; border-radius: 50%; border: 2px var(--ion-color-primary-800) solid;">
 				</div>
 				<div class="ion-text-center ion-text-capitalize mb-1">
 					<div><b>{{userData?.namaLengkap || '-'}}</b></div>
@@ -58,7 +58,7 @@
 						</h3>
 						<div class="flex-1">
 							<small>Kwarcab KTA</small>
-							<div><b>{{userData?.kwarcab || '-'}}</b></div>
+							<div class="ion-text-capitalize"><b>{{userData?.kwarcab || '-'}}</b></div>
 						</div>
 					</div>
 

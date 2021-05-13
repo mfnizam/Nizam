@@ -1,14 +1,13 @@
 import { Component, OnDestroy, ViewChild } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { IonInfiniteScroll } from '@ionic/angular';
 
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ServerService } from '../../../services/server/server.service';
+import { StorageService } from '../../../services/storage/storage.service';
 import { ModalService } from '../../../services/modal/modal.service';
-import { PelatihanService, Pelatihan, Pelajaran } from '../../../services/pelatihan/pelatihan.service';
 import { UserService } from '../../../services/user/user.service';
+import { PelatihanService, Pelatihan, Pelajaran } from '../../../services/pelatihan/pelatihan.service';
 
 @Component({
 	selector: 'app-pelajaran',
@@ -26,20 +25,19 @@ export class PelajaranPage implements OnDestroy{
 	status = 'semua';
 	
 	constructor(
-		private router: Router,
-		private active: ActivatedRoute,
 		private server: ServerService,
+		private storage: StorageService,
 		private modal: ModalService,
 		private pelatihan: PelatihanService,
-		private user: UserService
+		private user: UserService,
 		) {
 
 		pelatihan.getDataPelatihanAktif()
 		.pipe(takeUntil(this.destroy$))
 		.subscribe(data => {
 			this.dataPelatihanAktif = data;
-			console.log(this.dataPelatihanAktif, 'pelatihan aktif change')
-			if(data) this.ambilPelajaran(data._id)
+			this.dataPelajaran = [];
+			if(data) this.ambilPelajaran(data._id);
 		})
 
 		pelatihan.getDataPelajaran()
@@ -49,10 +47,38 @@ export class PelajaranPage implements OnDestroy{
 		})
 	}
 
+	ionViewDidEnter(){
+		if(this.dataPelatihanAktif) this.ambilPelajaran(this.dataPelatihanAktif._id);
+		
+		if(!this.pelatihan.getValuePelatihanAktif()){
+			this.storage.getDecodedStorage('user:data').then((data: any)=> {
+				this.ambilPelatihan(data._id)   
+			})
+		}
+	}
+
+	ambilPelatihan(id){
+    if(this.pelatihan.getValuePelatihan().length < 1){
+      this.modal.showLoading("Memuat data pelatihan...");
+    }
+    this.server.pelatihan(id).then(data => {
+      this.modal.hideLoading();
+      console.log(data)
+      if(data.success) {
+      	// this.pelatihan.setDataPelatihan(data.pelatihan)
+      	this.pelatihan.setDataPelatihanAktif(data.pelatihan[0])
+      	this.storage.setStorage('user:pelatihan', data.pelatihan[0])
+      }
+    }).catch(err => {
+      this.modal.hideLoading();
+      console.log(err)
+    })
+  }
+
 	ambilPelajaran(idPelatihan, idUser = this.user.getValueUser()?._id){
 		if(!idPelatihan || !idUser) return;
 		this.loadingPelajaran = 1;
-		this.server.pelajaran({idPelatihan, idUser}).then(data => {
+		this.server.hasilPelajaran({idPelatihan, idUser}).then(data => {
 			console.log(data)
 			if(data.success){
 				this.loadingPelajaran = 0;
@@ -66,16 +92,12 @@ export class PelajaranPage implements OnDestroy{
 		})
 	}
 
-	ionViewDidEnter(){
-		if(this.dataPelajaran) this.ambilPelajaran(this.dataPelatihanAktif._id);
-	}
-
 	ngOnDestroy(){
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  cuPelajaran(v){
+  cuPelajaran(v?){
   	if(!this.dataPelatihanAktif._id || !this.user.getValueUser()._id) return;
   	this.modal.showPrompt((v? 'Edit' : 'Tambah') + ' Pelajaran', null, [{
   		name: 'nama',
@@ -118,8 +140,8 @@ export class PelajaranPage implements OnDestroy{
   			}
   		}
   	})
-  	// this.router.navigate(['cu'], { relativeTo: this.active });
   }
+
   hapusPelajaran(nama, id){
   	if(!id) return;
   	this.modal.showConfirm('Hapus Pelajaran', 'Ingin Menghapus Pelajaran <b class="ion-text-capitalize">"' + nama + '"</b>', ['Batal', 'Hapus']).then(data => {

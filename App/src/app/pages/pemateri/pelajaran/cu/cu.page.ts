@@ -10,7 +10,9 @@ import { ServerService } from '../../../../services/server/server.service';
 import { ModalService } from '../../../../services/modal/modal.service';
 import { PelatihanService } from '../../../../services/pelatihan/pelatihan.service';
 import { UserService } from '../../../../services/user/user.service';
+import { FileService } from '../../../../services/file/file.service';
 
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-cu',
@@ -25,31 +27,38 @@ export class CuPage implements OnDestroy{
   idPelajaran;
   idMateri;
   idSoal;
+  fileName;
 
   form: FormGroup = new FormGroup({
     idPelajaran: new FormControl(null, [this.cv('materi', true, false)]),
     idMateri: new FormControl(null, [this.cv('materi', false, true), this.cv('soal', true, false)]),
     jenis: new FormControl(null, [this.cv('materi')]),
+    file: new FormControl(null, [this.cv3('materi')]),
+    namaMateri: new FormControl(null, [this.cv3('materi')]),
     tglPelaksanaan: new FormControl(null, [this.cv('materi')]),
     waktuPelaksanaanMulai: new FormControl(null, [this.cv('materi')]),
     waktuPelaksanaanAkhir: new FormControl(null, [this.cv('materi')]),
-    durasiPelaksanaan: new FormControl(null, [this.cv('materi'), this.durasiValidator()]),
+    durasiPelaksanaan: new FormControl(null, [this.cv('materi'), this.dv()]),
     idSoal: new FormControl(null, [this.cv('soal', false, true)]),
     soalDeskripsi: new FormControl(null, [this.cv('soal')]),
     soalJawaban: new FormControl([], [this.cv('soal')]),
-    soalPilihan: new FormControl(null, [this.cv('soal')]),
+    soalKunci: new FormControl(null, [this.cv('soal')]),
   })
 
   isLoading = false;
 
-  // validatsi berdasarkan jenis belum 
   cv(t, c = true, u = true): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} | null => {
-      return ((this.update != c) || (this.update == u)) && !control.value && this.jenis == t? {err: 'required'} : null
+      return this.form && this.form.get('jenis').value < 4 && ((this.update != c) || (this.update == u)) && !control.value && this.jenis == t? {err: 'required'} : null
     };
   }
+  cv3(t): ValidatorFn{
+    return (control: AbstractControl): {[key: string]: any} | null => {
+      return this.form && this.form.get('jenis').value > 3 && !control.value && this.jenis == t? { err: 'required' } : null
+    }; 
+  }
 
-  durasiValidator(): ValidatorFn {
+  dv(): ValidatorFn {
     return (control: AbstractControl): {[key: string]: any} | null => {
       const date = new Date(control.value);
       return date.getHours() < 1 && date.getMinutes() < 1 ? {durasiIsValid: {value: control.value}} : null;
@@ -63,7 +72,8 @@ export class CuPage implements OnDestroy{
     private server: ServerService,
     private modal: ModalService,
     private pelatihan: PelatihanService,
-    private user: UserService
+    private user: UserService,
+    private file: FileService
     ) {
   	active.params
     .pipe(takeUntil(this.destroy$))
@@ -77,6 +87,7 @@ export class CuPage implements OnDestroy{
 
       if(this.update) {
         // this.modal.showLoading('Memuat Data...')
+        this.setFormValue(this.idMateri, this.idSoal);
       }else{
         this.form.controls.idPelajaran.setValue(this.idPelajaran);
         this.form.controls.idMateri.setValue(this.idMateri);
@@ -110,7 +121,7 @@ export class CuPage implements OnDestroy{
       this.form.controls.idSoal.setValue(idSoal);
       this.form.controls.soalDeskripsi.setValue(s?.deskripsi);
       this.form.controls.soalJawaban.setValue(s?.jawaban);
-      this.form.controls.soalPilihan.setValue(s?.pilihan);
+      this.form.controls.soalKunci.setValue(s?.kunci);
     }
   }
 
@@ -123,12 +134,39 @@ export class CuPage implements OnDestroy{
     this.navCtrl.back();
   }
 
+  jenisChange(){
+    this.form.get('tglPelaksanaan').reset();
+    this.form.get('waktuPelaksanaanMulai').reset();
+    this.form.get('waktuPelaksanaanAkhir').reset();
+    this.form.get('durasiPelaksanaan').reset();
+    this.form.get('file').reset();
+    this.form.get('namaMateri').reset();
+  }
+
+  pilihFile(){
+    if(Capacitor.isNative){
+      this.file.file("application/pdf").then(data => {
+        console.log(data, 'from file');
+        this.fileName = decodeURIComponent(data).split('/').slice(-1)[0];
+        this.form.get('file').setValue(data);
+      }).catch(err => {
+        console.log(err);
+      })
+    }else {
+      document.getElementById('file-input').click();
+    }
+  }
+
+  fileInputChange(e){
+    this.fileName = e.target.files[0].name
+    this.form.get('file').setValue(URL.createObjectURL(e.target.files[0]));
+  }
+
   simpan(){
-    // console.log(this.form.value)
     if(this.form.invalid) return;
     if(this.jenis == 'materi'){
-      this.modal.showLoading('Menyimpan Materi...');
-      if(this.update){
+      this.modal.showLoading('Menyimpan Materi...', false, 0);
+      if(this.update){ // update file materi belum bisa
         this.server.editMateri(this.form.value).then(data => {
           console.log(data);
           this.modal.hideLoading();
@@ -152,7 +190,7 @@ export class CuPage implements OnDestroy{
           console.log(err)  
         })
       }else{
-        this.server.tambahMateri(this.form.value).then(data => {
+        this.server.tambahMateri(this.form.value, this.form.get('jenis').value > 3, this.form.get('file').value, this.fileName? encodeURI(this.fileName.split('.').slice(0, -1).join('.')) : null, 'application/pdf').then(data => {
           console.log(data);
           this.modal.hideLoading();
           if(data.success){
@@ -202,6 +240,7 @@ export class CuPage implements OnDestroy{
           console.log(err)  
         })
       }else{
+        this.form.value.soalJawaban = this.form.value.soalJawaban.map(v => { return {fid: v._id, deskripsi: v.deskripsi}})
         this.server.tambahSoalMateri(this.form.value).then(data => {
           console.log(data);
           this.modal.hideLoading();
@@ -228,7 +267,7 @@ export class CuPage implements OnDestroy{
     }
   }
 
-  cuJawaban(v){
+  cuJawaban(v?){
     this.modal.showPrompt('Tambah Jawaban', null, [{
       name: 'deskripsi',
       type: 'textarea',
@@ -255,6 +294,6 @@ export class CuPage implements OnDestroy{
     })
   }
   pilihJawaban(_id){
-    this.form.controls.soalPilihan.setValue(_id);
+    this.form.controls.soalKunci.setValue(_id);
   }
 }

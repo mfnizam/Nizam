@@ -17,6 +17,7 @@ export class Pelatihan{
 	deskripsi: string;
 	biaya: number;
 	pemateri: User[];
+	peserta: User[];
 	pelajaran: Pelajaran[];
 	status: number;
 }
@@ -39,14 +40,34 @@ export class Materi{
 	waktuPelaksanaanMulai: Date;
 	waktuPelaksanaanAkhir: Date;
 	durasiPelaksanaan: number; // dalam satuan waktu menit,
-	soal: {
-		_id: string,
-		deskripsi: string,
-		jawaban: {
-			_id: string,
-			deskripsi: string
-		}[],
-		pilihan: string
+	soal: Soal[];
+	materiUrl: string;
+	namaMateri: string;
+	peserta: User[];
+	mengerjakan?: number;
+	tertinggi?: number;
+	rata?: number;
+}
+
+export class Soal{
+	_id: string;
+	deskripsi: string;
+	jawaban: {
+		_id: string;
+		deskripsi: string
+	}[];
+	kunci: string;
+	pilihan: string;
+}
+
+export class Pilihan{
+	_id: string;
+	peserta: any;
+	materi: any;
+	pilihan: {
+		penilaian?: Boolean;
+		soal: string;
+		pilihan: string;
 	}[]
 }
 
@@ -66,7 +87,10 @@ export class PelatihanService {
 	private dataMateri: BehaviorSubject<Array<Materi>> = new BehaviorSubject<Array<Materi>>([]);
 	dataMateri_ = this.dataMateri.asObservable();
 
-	public jenisMateri = [{title: '', jenis: ''}, {title: 'Pre Test', jenis: 'Soal'}, {title: 'Post Test', jenis: 'Soal'}, {title: 'Re-Post Test', jenis: 'Soal'}, {title: 'Materi', jenis: 'Materi'}, {title: 'Lain', jenis: 'Lain-lain'}];
+	private dataPilihan: BehaviorSubject<Array<Pilihan>> = new BehaviorSubject<Array<Pilihan>>([]);
+	dataPilihan_ = this.dataPilihan.asObservable();
+
+	public jenisMateri = [{title: '', jenis: ''}, {title: 'Pre Test', jenis: 'Soal'}, {title: 'Post Test', jenis: 'Soal'}, {title: 'Remidi-Post Test', jenis: 'Soal'}, {title: 'Materi', jenis: 'Materi'}, {title: 'Lain', jenis: 'Lain-lain'}];
 
 	constructor() { }
 
@@ -85,4 +109,8 @@ export class PelatihanService {
 	setDataMateri(data: Array<Materi>){ this.dataMateri.next(data) }
 	getDataMateri(){ return this.dataMateri_ }
 	getValueMateri(){ return this.dataMateri.getValue() };
+
+	setDataPilihan(data: Array<Pilihan>){ this.dataPilihan.next(data) }
+	getDataPilihan(){ return this.dataPilihan_ }
+	getValuePilihan(){ return this.dataPilihan.getValue() };
 }

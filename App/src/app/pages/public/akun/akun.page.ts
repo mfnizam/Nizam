@@ -6,13 +6,12 @@ import { Subject } from 'rxjs';
 
 import { StorageService } from '../../../services/storage/storage.service';
 import { UserService, User } from '../../../services/user/user.service';
-// import { TagihanService } from '../../../services/tagihan/tagihan.service';
+import { PelatihanService } from '../../../services/pelatihan/pelatihan.service';
 // import { PembayaranService } from '../../../services/pembayaran/pembayaran.service';
 
 @Component({
   selector: 'app-akun',
-  templateUrl: 'akun.page.html',
-  styleUrls: ['akun.page.scss']
+  templateUrl: 'akun.page.html'
 })
 export class AkunPage implements OnDestroy{
   private destroy$: Subject<void> = new Subject<void>();
@@ -22,8 +21,7 @@ export class AkunPage implements OnDestroy{
   	private router: Router,
   	private storage: StorageService,
     private user: UserService,
-    /*private tagihan: TagihanService,
-    private pembayaran: PembayaranService*/) {
+    private pelatihan: PelatihanService) {
     user.getDataUser()
     .pipe(takeUntil(this.destroy$))
     .subscribe(data => {
@@ -46,18 +44,15 @@ export class AkunPage implements OnDestroy{
 
   logout(){
     this.user.setDataUser(null);
-  	this.storage.removeStorage('user:data').then(v => {
-  		this.router.navigate(['/masuk']);
-
-      // this.tagihan.setDataTagihan([]);
-      // this.tagihan.setDataBayar([]);
-      // this.tagihan.setDataHistori([]);
-
-      // this.pembayaran.setDataPembayaran([]);
-      // this.pembayaran.setDataHistori([]);
-      // this.pembayaran.setDataBelum([])
-      // this.pembayaran.setDataMenuggu([])
-  	})
+    this.pelatihan.setDataPelatihanAktif(null);
+    this.pelatihan.setDataPelatihan([]);
+    this.pelatihan.setDataPelajaran([]);
+    this.pelatihan.setDataMateri([]);
+    this.pelatihan.setDataPilihan([]);
+    this.storage.removeStorage('user:pelatihan');
+    this.storage.removeStorage('user:data').then(v => {
+      this.router.navigate(['/masuk']);
+    })
   }
 
 }

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Nizam</string>
+    <string name="title_activity_main">Nizam</string>
+    <string name="package_name">com.mfnizam.nizamonlinetest</string>
+    <string name="custom_url_scheme">com.mfnizam.nizamonlinetest</string>
+</resources>

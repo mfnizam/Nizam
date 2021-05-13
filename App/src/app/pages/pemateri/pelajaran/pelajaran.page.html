@@ -14,7 +14,7 @@
 			<ion-col>
 				<div class="c-medium-tint mb-05"><small>Pilih Pelatihan</small></div>
 				<div [routerLink]="['/pemateri/pelatihan']" class="border border-card p-1 d-flex ion-align-items-center"  [ngClass]="dataPelatihanAktif? 'border-c-primary c-primary' : 'c-medium-tint'">
-					<div class="flex-1 text-max text-max-1">
+					<div class="flex-1 text-max text-max-1 ion-text-capitalize">
 						<b *ngIf="dataPelatihanAktif">
 							{{dataPelatihanAktif.nama}}
 						</b>
@@ -77,23 +77,36 @@
 			</ion-row>
 			<ion-row *ngIf="!m.hide" class="ion-padding-start ion-padding-end mb-2">
 				<ion-col size-sm="4" size="6" *ngFor="let d of m.materi">
-					<ion-card [routerLink]="['detail', {idMateri: d._id}]" mode="ios" class="ion-no-margin w-100">
+					<ion-card [routerLink]="['detail', {idMateri: d._id}]" mode="ios" class="ion-no-margin w-100 h-100">
 						<div class="p-relative">
 							<div class="d-flex flex-column p-1">
 								<div class="flex-1 c-primary mb-1"><b>{{jenisMateri[d.jenis].title}}</b></div>	
-								<div class="mb-05">
-									<small class="opacity-3">Pelaksanaan</small>
-									<div><small><b>{{d.waktuPelaksanaanMulai | date:'HH:mm'}} - {{d.waktuPelaksanaanAkhir | date:'HH:mm'}} / {{d.tglPelaksanaan | date:'dd MMM yyyy'}}</b></small></div>
-									<!-- <div><small><b></b></small></div> -->
-								</div>
-								<div class="d-flex">
-									<div class="flex-1">
-										<small class="opacity-3">Durasi</small>
-										<div><small><b>{{d.durasiPelaksanaan | date:'HH:mm'}}</b></small></div>
+								<div *ngIf="d.jenis < 4">
+									<div class="mb-05">
+										<small class="opacity-3">Pelaksanaan</small>
+										<div><small><b>{{d.waktuPelaksanaanMulai | date:'HH:mm'}} - {{d.waktuPelaksanaanAkhir | date:'HH:mm'}} / {{d.tglPelaksanaan | date:'dd MMM yyyy'}}</b></small></div>
+										<!-- <div><small><b></b></small></div> -->
 									</div>
-									<div class="flex-1" [class.c-danger]="d.soal?.length < 1">
-										<small class="opacity-3">Jumlah Soal</small>
-										<div><small><b>{{d.soal?.length || 0}} Soal</b></small></div>
+									<div class="d-flex">
+										<div class="flex-1">
+											<small class="opacity-3">Durasi</small>
+											<div><small><b>{{d.durasiPelaksanaan | date:'HH:mm'}}</b></small></div>
+										</div>
+										<div class="flex-1" [class.c-danger]="d.soal?.length < 1">
+											<small class="opacity-3">Jumlah Soal</small>
+											<div><small><b>{{d.soal?.length || 0}} Soal</b></small></div>
+										</div>
+									</div>
+								</div>
+								<div *ngIf="d.jenis > 3">
+									<div class="mb-05">
+										<small class="opacity-3">Nama Materi</small>
+										<div><small><b>{{d.namaMateri || '-'}}</b></small></div>
+									</div>
+									<div>
+										<small class="opacity-3">File Materi</small>
+										<div [class.c-danger]="!d.materiUrl"><small><b>{{d.materiUrl? 'Tersedia' : 'Kosong'}}</b></small></div>
+										<!-- <ion-chip [color]="d.materiUrl? 'success' : 'danger'">{{d.materiUrl? 'Sudah' : 'Belum'}} Upload File</ion-chip> -->
 									</div>
 								</div>
 							</div>

@@ -81,6 +81,22 @@
 						</ion-card>
 					</div>
 					<ion-button mode="ios" size="small" color="primary" (click)="tambahPemateri()">Pilih Pemateri</ion-button>
+
+					<h3 class="c-medium-tint ion-no-margin ion-margin-top">Peserta</h3>
+					<div *ngIf="form.controls.peserta?.value?.length > 0">
+						<ion-card *ngFor="let pes of form.controls.peserta.value;" mode="ios" class="ion-no-margin mt-1 py-2 px-2 mb-2">
+							<div class="d-flex align-items-center flex-wrap">
+								<ion-avatar class="ion-margin-end flex-shrink-0 border-avatar">
+									<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg">
+								</ion-avatar>
+								<div class="flex-1">
+									<div class="text-max text-max-1 ion-text-capitalize"><b>{{pes.namaLengkap}}</b></div>
+									<ion-note color="primary" class="text-max text-max-1 fs-small" [innerHtml]="pes.noKta"></ion-note>
+								</div>
+							</div>
+						</ion-card>
+					</div>
+					<ion-button mode="ios" size="small" color="primary" (click)="tambahPeserta()">Pilih Peserta</ion-button>
 				</form>
 			</ion-col>
 		</ion-row>

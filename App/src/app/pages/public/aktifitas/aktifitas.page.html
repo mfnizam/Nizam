@@ -5,12 +5,26 @@
 				<div class="header-title">Aktifitas</div>
 			</ion-col>
 		</ion-row>
+		<ion-row class="ion-padding-start ion-padding-end">
+			<ion-col>
+				<div class="c-medium-tint mb-05"><small>Pilih Pelatihan</small></div>
+				<div [routerLink]="['/public/pelatihan/pilih']" class="border border-card p-1 d-flex ion-align-items-center"  [ngClass]="dataPelatihanAktif? 'border-c-primary c-primary' : 'c-medium-tint'">
+					<div class="flex-1 text-max text-max-1">
+						<b *ngIf="dataPelatihanAktif">
+							{{dataPelatihanAktif.nama}}
+						</b>
+						<span *ngIf="!dataPelatihanAktif">Tidak Ada Pelatihan Yang Aktif</span>
+					</div>
+					<ion-icon name="chevron-down"></ion-icon>
+				</div>
+			</ion-col>
+		</ion-row>
 		<ion-row>
 			<ion-col>
 				<ion-searchbar mode="ios" placeholder="Cari Test Atau Materi" class="contain-unset h-auto ion-no-padding ion-padding-start ion-padding-end mb-2"></ion-searchbar>
 			</ion-col>
 		</ion-row>
-		<ion-row>
+		<!-- <ion-row>
 			<ion-col class="ion-no-padding">
 				<div class="mb-1 ion-padding-start ion-padding-end o-auto">
 					<div class="pl-gc pr-gc">
@@ -34,79 +48,75 @@
 					</div>
 				</div>
 			</ion-col>
-		</ion-row>
-		<ion-row class="ion-padding-start ion-padding-end mb-05">
-			<ion-col class="d-flex ion-align-items-center">
-				<h5 class="flex-1 ion-no-margin c-medium-tint"><b>Materi Keorganisasian</b></h5>
-				<!-- <ion-note [routerLink]="['/', { filter: 'test' }]" color="primary" class="flex-shrink-0">Lihat Semua (10)</ion-note> -->
+		</ion-row> -->
+
+		<ion-row *ngIf="dataPelajaran.length < 1" class="ion-padding-start ion-padding-end mb-05">
+			<ion-col>
+				<ion-card mode="ios" class="ion-no-margin ion-padding">
+					<div class="ion-text-center">
+						<div class="c-medium-tint mb-05">{{loadingPelajaran == 1? 'Memuat Pelajaran...' : loadingPelajaran == 2? 'Gagal memuat Pelajaran. Pilih pelatihan dan coba lagi' : 'Pelajaran kosong, silahkan pilih pelatihan dan tambahkan Pelajaran.'}}</div>
+						<!-- <ion-button *ngIf="loadingPelajaran == 0" color="primary" size="small" [disabled]="!dataPelatihanAktif" (click)="cuPelajaran()">+ Tambah Pelajaran</ion-button> -->
+						<ion-spinner *ngIf="loadingPelajaran == 1" name="lines"></ion-spinner>
+						<ion-button *ngIf="loadingPelajaran == 2" mode="ios" size="small" color="warning" (click)="ambilPelajaran(dataPelatihanAktif._id)">Coba Lagi</ion-button>
+					</div>
+				</ion-card>
 			</ion-col>
 		</ion-row>
-		<ion-row class="mb-1">
-			<ion-col class="ion-no-padding">
-				<ion-slides [options]="{ slidesPerView: 2.5}" class="ion-padding-start ion-padding-bottom ion-padding-end o-visible">
-					<ion-slide *ngFor="let card of [0,1,2]; let l = last" class="pl-gc pr-gc">
-						<ion-card mode="ios" class="ion-no-margin w-100">
-							<div class="p-relative pb-100">
-								<ion-img style="pointer-events:none" src="https://via.placeholder.com/150" class="p-absolute w-100 h-100 of-cover"></ion-img>
+		<ng-container *ngFor="let m of dataPelajaran">
+			<ion-row class="ion-padding-start ion-padding-end">
+				<ion-col class="d-flex ion-align-items-center">
+					<h3 class="flex-1 ion-no-margin ion-text-capitalize"><b>{{m.nama}}</b></h3>
+					<div style="line-height: .7rem; text-align: right;">
+						<small class="opacity-2">Pengajar</small>
+						<div><small>{{m.pengajar?.namaLengkap || '-'}}</small></div>
+					</div>
+				</ion-col>
+			</ion-row>
+			<ion-row class="ion-padding-start ion-padding-end mb-2">
+				<ion-col size-sm="4" size="6" *ngFor="let d of m.materi">
+					<ion-card [routerLink]="['detail', {idMateri: d._id}]" mode="ios" class="ion-no-margin w-100 h-100">
+						<div class="p-relative">
+							<div class="d-flex flex-column p-1">
+								<div class="flex-1 c-primary mb-1"><b>{{jenisMateri[d.jenis].title}}</b></div>	
+								<div *ngIf="d.jenis < 4">
+									<div class="mb-05">
+										<small class="opacity-3">Pelaksanaan</small>
+										<div><small><b>{{d.waktuPelaksanaanMulai | date:'HH:mm'}} - {{d.waktuPelaksanaanAkhir | date:'HH:mm'}} / {{d.tglPelaksanaan | date:'dd MMM yyyy'}}</b></small></div>
+									</div>
+									<div class="d-flex">
+										<div class="flex-1">
+											<small class="opacity-3">Durasi</small>
+											<div><small><b>{{d.durasiPelaksanaan | date:'HH:mm'}}</b></small></div>
+										</div>
+										<div class="flex-1" [class.c-danger]="d.soal?.length < 1">
+											<small class="opacity-3">Jumlah Soal</small>
+											<div><small><b>{{d.soal?.length || 0}} Soal</b></small></div>
+										</div>
+									</div>
+								</div>
+								<div *ngIf="d.jenis > 3">
+									<div class="mb-05">
+										<small class="opacity-3">Nama Materi</small>
+										<div><small><b>{{d.namaMateri || '-'}}</b></small></div>
+									</div>
+									<div>
+										<small class="opacity-3">File Materi</small>
+										<div [class.c-danger]="!d.materiUrl"><small><b>{{d.materiUrl? 'Tersedia' : 'Kosong'}}</b></small></div>
+									</div>
+								</div>
 							</div>
-						</ion-card>
-					</ion-slide>
-				</ion-slides>
-			</ion-col>
-		</ion-row>
-		<ion-row class="ion-padding-start ion-padding-end mb-05">
-			<ion-col class="d-flex ion-align-items-center">
-				<h5 class="flex-1 ion-no-margin c-medium-tint"><b>Materi Kepemimpinan</b></h5>
-			</ion-col>
-		</ion-row>
-		<ion-row class="mb-1">
-			<ion-col class="ion-no-padding">
-				<ion-slides [options]="{ slidesPerView: 2.5}" class="ion-padding-start ion-padding-bottom ion-padding-end o-visible">
-					<ion-slide *ngFor="let card of [0,1,2]; let l = last" class="pl-gc pr-gc">
-						<ion-card mode="ios" class="ion-no-margin w-100">
-							<div class="p-relative pb-100">
-								<ion-img style="pointer-events:none" src="https://via.placeholder.com/150" class="p-absolute w-100 h-100 of-cover"></ion-img>
-							</div>
-						</ion-card>
-					</ion-slide>
-				</ion-slides>
-			</ion-col>
-		</ion-row>
-		<ion-row class="ion-padding-start ion-padding-end mb-05">
-			<ion-col class="d-flex ion-align-items-center">
-				<h5 class="flex-1 ion-no-margin c-medium-tint"><b>Materi Sandi Dan Simpul</b></h5>
-			</ion-col>
-		</ion-row>
-		<ion-row class="mb-1">
-			<ion-col class="ion-no-padding">
-				<ion-slides [options]="{ slidesPerView: 2.5}" class="ion-padding-start ion-padding-bottom ion-padding-end o-visible">
-					<ion-slide *ngFor="let card of [0,1,2]; let l = last" class="pl-gc pr-gc">
-						<ion-card mode="ios" class="ion-no-margin w-100">
-							<div class="p-relative pb-100">
-								<ion-img style="pointer-events:none" src="https://via.placeholder.com/150" class="p-absolute w-100 h-100 of-cover"></ion-img>
-							</div>
-						</ion-card>
-					</ion-slide>
-				</ion-slides>
-			</ion-col>
-		</ion-row>
-		<ion-row class="ion-padding-start ion-padding-end mb-05">
-			<ion-col class="d-flex ion-align-items-center">
-				<h5 class="flex-1 ion-no-margin c-medium-tint"><b>kuesioner Pelatihan</b></h5>
-			</ion-col>
-		</ion-row>
-		<ion-row class="mb-1">
-			<ion-col class="ion-no-padding">
-				<ion-slides [options]="{ slidesPerView: 2.5}" class="ion-padding-start ion-padding-bottom ion-padding-end o-visible">
-					<ion-slide *ngFor="let card of [0,1,2]; let l = last" class="pl-gc pr-gc">
-						<ion-card mode="ios" class="ion-no-margin w-100">
-							<div class="p-relative pb-100">
-								<ion-img style="pointer-events:none" src="https://via.placeholder.com/150" class="p-absolute w-100 h-100 of-cover"></ion-img>
-							</div>
-						</ion-card>
-					</ion-slide>
-				</ion-slides>
-			</ion-col>
-		</ion-row>
+						</div>
+					</ion-card>
+				</ion-col>
+				<ion-col size="12" *ngIf="m.materi?.length < 1">
+					<ion-card mode="ios" class="ion-no-margin ion-padding d-flex ion-align-items-center" style="height: 108.8px;">
+						<div class="ion-text-center c-medium-tint flex-1">
+							{{loadingPelajaran == 1? 'Memuat Materi dari "' + m.nama + '"...' : loadingPelajaran == 2? 'Gagal memuat Materi dari "' + m.nama + '". Pilih pelatihan dan coba lagi' : 'Materi dari "' + m.nama + '" kosong'}}
+						</div>
+					</ion-card>
+				</ion-col>
+			</ion-row>
+		</ng-container>
+
 	</ion-grid>
 </ion-content>

@@ -51,12 +51,12 @@
 				</div>
 			</ion-col>
 		</ion-row>
-		<ion-row *ngIf="dataPelatihan?.pemateri?.length > 0">
+		<ion-row>
 			<ion-col>
-				<h3 class="c-medium-tint ion-no-margin ion-margin-top">Pemateri</h3>
+				<h3 class="c-medium-tint ion-no-margin ion-margin-top"><b>Pemateri</b></h3>
 			</ion-col>
 		</ion-row>
-		<ion-row *ngIf="dataPelatihan?.pemateri?.length > 0">
+		<ion-row>
 			<ion-col>
 				<ion-card *ngFor="let p of dataPelatihan?.pemateri" mode="ios" class="ion-no-margin ion-margin-bottom py-2 px-2 mb-2 border-avatar d-flex ion-align-items-center">
 					<div class="d-flex ion-align-items-center flex-wrap">
@@ -67,11 +67,32 @@
 							<div class="text-max text-max-1"><b>{{p.namaLengkap || '-'}}</b></div>
 							<div class="text-max text-max-1"><small>{{p.noTlp || '-'}}</small></div>
 						</div>
-						<!-- <div class="flex-shrink-0">
-							<ion-icon name="chevron-forward-outline"></ion-icon>
-						</div> -->
 					</div>
 				</ion-card>
+				<ion-card *ngIf="dataPelatihan?.pemateri?.length < 1" mode="ios" class="py-2 ion-no-margin ion-text-center ion-margin-bottom">Tidak ada pemateri</ion-card>
+				<ion-button mode="ios" size="small" color="primary" (click)="tambahPemateri()">Tambah Pemateri</ion-button>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<h3 class="c-medium-tint ion-no-margin ion-margin-top"><b>Peserta</b></h3>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-card *ngFor="let p of dataPelatihan?.peserta" mode="ios" class="ion-no-margin ion-margin-bottom py-2 px-2 mb-2 border-avatar d-flex ion-align-items-center">
+					<div class="d-flex ion-align-items-center flex-wrap">
+						<ion-avatar class="ion-margin-end flex-shrink-0">
+							<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg">
+						</ion-avatar>
+						<div class="flex-1">
+							<div class="text-max text-max-1 ion-text-capitalize"><b>{{p.namaLengkap || '-'}}</b></div>
+							<div class="text-max text-max-1"><small>{{p.email}}{{p.noKta? ' - ' + p.noKta : ''}}</small></div>
+						</div>
+					</div>
+				</ion-card>
+				<ion-card *ngIf="dataPelatihan?.peserta?.length < 1" mode="ios" class="py-2 ion-no-margin ion-text-center ion-margin-bottom">Tidak ada peserta</ion-card>
+				<ion-button mode="ios" size="small" color="primary" (click)="tambahPeserta()">Tambah Peserta</ion-button>
 			</ion-col>
 		</ion-row>
 	</ion-grid>

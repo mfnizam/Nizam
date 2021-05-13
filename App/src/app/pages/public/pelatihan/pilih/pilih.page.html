@@ -1,0 +1,55 @@
+<ion-content class="ion-padding-top ion-padding-bottom">
+	<ion-grid class="px-0">
+		<ion-row class="header-title mb-1 ion-align-items-center ion-padding-start ion-padding-end">
+			<ion-col size="auto" class="d-none back-btn">
+				<ion-icon name="arrow-back" (click)="goBack()"></ion-icon>
+			</ion-col>
+			<ion-col>
+				<div class="header-title">Pilih Pelatihan</div>
+			</ion-col>
+			<ion-col size="auto">
+				<button class="b-none ion-no-padding" [disabled]="!dataPelatihanAktif" (click)="simpan()">
+					<ion-note color="primary"><h4 class="ion-no-margin" [style.opacity]="!dataPelatihanAktif? 0.2 : 1">Simpan</h4></ion-note>
+				</button>
+			</ion-col>
+		</ion-row>
+		<ion-row class="mb-1 ion-padding-start ion-padding-end">
+			<ion-col>
+				<ion-card *ngFor="let p of dataPelatihan" mode="ios" class="ion-no-margin w-100 mb-2 ion-padding border" [ngClass]="p['select']? 'border-c-primary' : 'border-c-transparent'" (click)="pilih(p._id)">
+					<div class="d-flex ion-align-items-start">
+						<div class="flex-1">
+							<div class="d-flex ion-align-items-start mb-1">
+								<h4 class="ion-no-margin flex-1 text-max text-max-1 ion-text-capitalize"><b>{{p.nama}}</b></h4>
+								<div class="flex-shrink-0">
+									<ion-checkbox [(ngModel)]="p['select']"></ion-checkbox>
+								</div>
+							</div>
+							<div class="d-flex ion-align-items-center flex-wrap mb-1">
+								<div class="flex-1 opacity-3"><b>Pelaksanaan</b></div>
+								<div class="mr-05">:</div>
+								<div class="flex-2 flex-shrink-0">
+									<b>{{p.tglPelaksanaanMulai | date: 'dd MMM yyy'}} - {{p.tglPelaksanaanAkhir | date: 'dd MMM yyy'}}</b>
+								</div>
+							</div>
+							<div class="d-flex ion-align-items-center flex-wrap mb-1">
+								<div class="flex-1 opacity-3"><b>Tingkatan</b></div>
+								<div class="mr-05">:</div>
+								<div class="flex-2 flex-shrink-0">
+									<b>{{p.tingkatan?.title || '-'}}</b>
+								</div>
+							</div>
+							<div class="mb-05 opacity-3"><b>Deskripsi</b></div>
+							<p class="ion-no-margin text-max text-max-3 mb-2">{{p.deskripsi}}</p>
+							<ion-chip class="ion-no-margin" color="primary">
+								<ion-label><b>Sedang Berlangsung</b></ion-label>
+							</ion-chip>	
+						</div>
+					</div>
+				</ion-card>
+				<ion-card *ngIf="dataPelatihan.length < 1" mode="ios" class="ion-no-margin w-100 mb-2 ion-padding ion-text-center">
+					Data Pelatihan Kosong
+				</ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>

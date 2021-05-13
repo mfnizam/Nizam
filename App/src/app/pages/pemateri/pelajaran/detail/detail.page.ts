@@ -50,14 +50,14 @@ export class DetailPage implements OnDestroy{
 		pelatihan.getDataPelajaran()
 		.pipe(takeUntil(this.destroy$))
 		.subscribe(data => {
-			console.log(data)
+			// console.log(data)
 			this.dataMateri = data.find(v => v.materi.some(e => e._id == this.idMateri))?.materi?.find(v => v._id == this.idMateri);
 		})
 
-		if(pelatihan.getValuePelajaran().length < 1){
-			// this.modal.showLoading('Mengambil data materi...')
-			// this.server.pelajaran
-		}
+		// if(pelatihan.getValuePelajaran().length < 1){
+		// 	this.modal.showLoading('Mengambil data materi...')
+		// 	this.server.pelajaran
+		// }
 	}
 
 	ngOnDestroy(){
@@ -71,7 +71,7 @@ export class DetailPage implements OnDestroy{
 
 	hapus(jenis, nama, id){
 		if(!id) return;
-		this.modal.showConfirm('Hapus Materi', 'Yakin ingin menghapus <b class="ion-text-capitalize c-primary">' + this.jenisMateri[jenis].title + '</b> dari pelajaran  <b class="ion-text-capitalize">"' + nama + '"</b>', ['Batal', 'Hapus']).then(data => {
+		this.modal.showConfirm('Hapus ' + this.jenisMateri[jenis].title, 'Yakin ingin menghapus <b class="ion-text-capitalize c-primary">' + this.jenisMateri[jenis].title + ' - ' + (this.dataMateri.namaMateri || '') + '</b> dari pelajaran  <b class="ion-text-capitalize">"' + nama + '"</b>', ['Batal', 'Hapus']).then(data => {
 			if(!data) return;
 			this.modal.showLoading('Menghapus materi "' + nama + '"');
 			this.server.hapusMateri(id).then(data => {
@@ -92,6 +92,10 @@ export class DetailPage implements OnDestroy{
 				console.log(err)
 			})
 		})
+	}
+
+	ambilSoal(v?){
+		
 	}
 
 	hapusSoal(i, id){
@@ -136,8 +140,29 @@ export class DetailPage implements OnDestroy{
 		})
 	}
 
+	downloadMateri(url, nama = 'materi'){
+		this.server.downloadMateri(url, nama + '.pdf')
+		.then(data => {
+			console.log(data)
+		})
+		// .then((blob) => URL.createObjectURL(blob))
+		// .then((href) => {
+		// 	Object.assign(document.createElement('a'), {
+		// 		href,
+		// 		download: 'filename.pdf',
+		// 	}).click();
+		// })
+		.catch(err => {
+			console.log(err)
+		})
+	}
+
 	get jenisMateri(){
 		return this.pelatihan.jenisMateri;
+	}
+
+	get otherServer(){
+		return this.server.otherServer;	
 	}
 
 }

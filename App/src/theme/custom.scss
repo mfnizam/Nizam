@@ -29,6 +29,7 @@
 .c-medium-tint{ color: var(--ion-color-medium-tint);	}
 .c-light{ color: var(--ion-color-light)}
 .c-dark{ color: var(--ion-color-dark) }
+.c-success{ color: var(--ion-color-success) }
 .c-danger{ color: var(--ion-color-danger) }
 
 //position
@@ -97,6 +98,7 @@
 .mt-2 { margin-top: 1rem; }
 .ml-05 { margin-left: .3rem; }
 .ml-1 { margin-left: .5rem; }
+.ml--1 { margin-left: -0.5rem; }
 
 .p-05 { padding: .3rem; }
 .p-1 { padding: .5rem; }

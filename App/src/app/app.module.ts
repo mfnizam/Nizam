@@ -12,6 +12,8 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { HTTP } from '@ionic-native/http/ngx';
+import { FileChooser } from '@ionic-native/file-chooser/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 import { HttpClientModule } from '@angular/common/http';
 
@@ -81,6 +83,8 @@ import { ModalService } from './services/modal/modal.service';
     SplashScreen,
     FileTransfer,
     HTTP,
+    FileChooser,
+    File,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: LOCALE_ID, useValue: 'id-ID'},
 

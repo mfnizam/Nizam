@@ -26,6 +26,7 @@ export class CuPage implements OnDestroy {
   dataPelatihan: Pelatihan;
   dataTingkatan: Tingkatan[] = [];
   dataPemateri: User[] = [];
+  dataPeserta: User[] = [];
 
   form: FormGroup = new FormGroup({
     // kode: new FormControl({value: null, disabled: true}, [Validators.required]),
@@ -39,6 +40,7 @@ export class CuPage implements OnDestroy {
     deskripsi: new FormControl(),
     biaya: new FormControl(0),
     pemateri: new FormControl([]),
+    peserta: new FormControl([]),
   });
 
   tingkatan: Tingkatan[] = [];
@@ -75,6 +77,13 @@ export class CuPage implements OnDestroy {
       this.dataPemateri = data;
       if(data && this.dataPelatihan) this.form.controls.pemateri.setValue(data.filter((v: any) => this.dataPelatihan.pemateri.map(v => v._id? v._id : v).includes(v._id)));
     })
+
+    this.master.getDataPeserta()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(data => {
+      this.dataPeserta = data;
+      if(data && this.dataPelatihan) this.form.controls.peserta.setValue(data.filter((v: any) => this.dataPelatihan.peserta.map(v => v._id? v._id : v).includes(v._id)));
+    })
   }
 
   ionViewDidEnter(){
@@ -83,11 +92,13 @@ export class CuPage implements OnDestroy {
       this.modal.showLoading('Memuat Data...');
       let ting = this.server.ambilTingkatan().catch(error => { return new Error(error) });
       let pem = this.server.ambilPemateri().catch(error => { return new Error(error) });
-      Promise.all([ting, pem]).then(data => {
+      let pes = this.server.ambilPeserta().catch(error => { return new Error(error) });
+      Promise.all([ting, pem, pes]).then(data => {
         setTimeout(_ => { this.modal.hideLoading() }, 2000)
         console.log(data);
         if(data[0].success) this.master.setDataTingkatan(data[0].tingkatan);
         if(data[1].success) this.master.setDataPemateri(data[1].pemateri);
+        if(data[2].success) this.master.setDataPeserta(data[2].peserta);
       })
     }
   }
@@ -109,6 +120,7 @@ export class CuPage implements OnDestroy {
       // this.form.controls.deskripsi.setValue(this.dataPelatihan.deskripsi);
       this.form.controls.biaya.setValue(this.dataPelatihan.biaya);
       this.form.controls.pemateri.setValue(this.dataPemateri.filter((v: any) => this.dataPelatihan.pemateri.map(v => v._id? v._id : v).includes(v._id)));
+      this.form.controls.peserta.setValue(this.dataPeserta.filter((v: any) => this.dataPelatihan.peserta.map(v => v._id? v._id : v).includes(v._id)));
       if(this.dataTingkatan.length > 0) {
         this.form.controls.tingkatan.setValue(this.dataPelatihan.tingkatan._id? this.dataPelatihan.tingkatan._id : this.dataPelatihan.tingkatan);
       }
@@ -129,7 +141,7 @@ export class CuPage implements OnDestroy {
       jenis: 'select',
       header: 'Pilih Pemateri',
       data: this.dataPemateri.map((v: any) => { 
-        return { id: v._id, title: v.namaLengkap, subTitle: v.noTlp, checked: this.form.controls.pemateri.value.map(v => v._id).includes(v._id) }
+        return { id: v._id, title: v.namaLengkap, subTitle: '<small>' + (v.noTlp || '-') + '</small>', checked: this.form.controls.pemateri.value.map(v => v._id).includes(v._id) }
       }),
       button: [{ 
         title: 'Batal', 
@@ -145,10 +157,32 @@ export class CuPage implements OnDestroy {
     })
   }
 
+  tambahPeserta(){
+    this.modal.showModal({
+      jenis: 'select',
+      header: 'Pilih Peserta',
+      data: this.dataPeserta.map((v: any) => { 
+        return { id: v._id, title: v.namaLengkap, subTitle: '<small>' + (v.noKta || '-')+ '</small>', checked: this.form.controls.peserta.value.map(v => v._id).includes(v._id) }
+      }),
+      button: [{ 
+        title: 'Batal', 
+        role: 'batal'
+      }, {
+        title: 'Pilih', 
+        submit: true/* role pada submit selalu 'ok'*/
+      }]
+    }).then(data => {
+      if(data.role == 'ok' && data.data){
+        this.form.controls.peserta.setValue(this.dataPeserta.filter(v => data.data[v._id]))
+      }
+    })
+  }
+
   simpan(){
     this.modal.showLoading('Menyimpan Data Pelatihan...')
     // this.form.controls.pemateri.setValue(this.form.controls.pemateri.value.map(v => v._id));
     this.form.value.pemateri = this.form.controls.pemateri.value.map(v => v._id);
+    this.form.value.peserta = this.form.controls.peserta.value.map(v => v._id);
     console.log(this.form.value);
     
     if(this.update){

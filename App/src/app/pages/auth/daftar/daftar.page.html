@@ -26,7 +26,7 @@
 				</ion-item>
 			</div>
 			<ion-item [style.opacity]="isEmail? 1 : 0"  lines="none" class="c-password">
-				<ion-label [color]="confPassword && (password != confPassword)? 'danger' : 'primary'" position="floating">Confirm Password</ion-label>
+				<ion-label [color]="form.controls?.confPassword?.value && (form.controls?.password?.value != form.controls?.confPassword?.value)? 'danger' : 'primary'" position="floating">Confirm Password</ion-label>
 				<ion-input formControlName="confPassword" [type]="showPass? 'text' : 'password'" name="password" required (ionChange)="inputChange()"></ion-input>
 			</ion-item>
 

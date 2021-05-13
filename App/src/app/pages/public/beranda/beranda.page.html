@@ -6,19 +6,33 @@
 					<img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg">
 				</ion-avatar>
 			</ion-col>
+			
+			
 			<ion-col>
 				<div class="mb-05">
 					<b><span class="ion-text-capitalize">{{userData?.namaLengkap}}</span></b>
 				</div>
+				<div [routerLink]="['/public/pelatihan/pilih']" class="border border-card p-1 d-flex ion-align-items-center" [ngClass]="dataPelatihanAktif? 'border-c-primary c-primary' : 'c-medium-tint'">
+					<div class="flex-1 text-max text-max-1">
+						<b *ngIf="dataPelatihanAktif">
+							{{dataPelatihanAktif.nama}}
+						</b>
+						<span *ngIf="!dataPelatihanAktif">Tidak Ada Pelatihan Yang Aktif</span>
+					</div>
+					<ion-icon name="chevron-down"></ion-icon>
+				</div>
+			</ion-col>
+			<!-- <ion-col>
+				<div class="mb-05">
+					<b><span class="ion-text-capitalize">{{userData?.namaLengkap}}</span></b>
+				</div>
 				<div>
-					<!-- <small class="c-medium-tint">Pelatihan Yang Sedang Aktif</small> -->
 					<div class="border c-medium-tint border-card p-1 d-flex ion-align-items-center">
 						<div class="flex-1 text-max text-max-1">Tidak Ada Pelatihan Yang Aktif</div>
 						<ion-icon name="chevron-down"></ion-icon>
 					</div>
 				</div>
-				<!-- <h3 class="ion-no-margin ion-text-capitalize">{{userData?.namaLengkap}}</h3> -->
-			</ion-col>
+			</ion-col> -->
 		</ion-row>
 
 		<ion-row class="ion-padding-start ion-padding-end mb-05">

@@ -80,10 +80,10 @@
 								<div class="flex-1 opacity-3"><b>Jumlah Peserta</b></div>
 								<div class="mr-05">:</div>
 								<div class="flex-2 flex-shrink-0">
-									<b>{{t.tingkatan?.peserta?.length || 0}}</b>
+									<b>{{t.peserta?.length || 0}} Peserta</b>
 								</div>
 							</div>
-							<div class="d-flex ion-align-items-center flex-wrap mb-2">
+							<!-- <div class="d-flex ion-align-items-center flex-wrap mb-2">
 								<div class="flex-1 opacity-3"><b>Biaya Pendaftaran</b></div>
 								<div class="mr-05">:</div>
 								<div class="flex-2 flex-shrink-0">
@@ -91,7 +91,7 @@
 										<ion-label><small>Rp. </small><b>{{t.biaya | currency:' ':'symbol':'.0':'id'}},-</b></ion-label>
 									</ion-chip>	
 								</div>
-							</div>
+							</div> -->
 							<div *ngIf="t.deskripsi">
 								<div class="mb-05 opacity-3"><b>Deskripsi</b></div>
 								<p class="ion-no-margin text-max text-max-3">{{t.deskripsi}}</p>

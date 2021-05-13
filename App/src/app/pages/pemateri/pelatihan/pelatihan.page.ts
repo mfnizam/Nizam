@@ -16,7 +16,6 @@ import { PelatihanService, Pelatihan } from '../../../services/pelatihan/pelatih
   styleUrls: ['./pelatihan.page.scss'],
 })
 export class PelatihanPage implements OnDestroy {
-
 	private destroy$: Subject<void> = new Subject<void>();
 	dataPelatihan: Pelatihan[] = [];
   dataPelatihanAktif: Pelatihan;
