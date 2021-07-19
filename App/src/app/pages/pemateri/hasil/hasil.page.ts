@@ -93,10 +93,8 @@ export class HasilPage implements OnDestroy{
     this.server.hasilPelajaran({idPelatihan, idUser}).then(data => {
       console.log(data)
       if(data.success){
-        setTimeout(_ => {
-          this.loadingPelajaran = 0;
-          this.pelatihan.setDataPelajaran(data.pelajaran);
-        }, 5000)
+        this.loadingPelajaran = 0;
+        this.pelatihan.setDataPelajaran(data.pelajaran);
       }else{
         this.loadingPelajaran = 2;
       }

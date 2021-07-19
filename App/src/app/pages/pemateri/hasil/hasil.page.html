@@ -74,7 +74,7 @@
 			<ion-row *ngIf="!m.hide" class="ion-padding-start ion-padding-end mb-2">
 				<ion-col size-sm="4" size="6" *ngFor="let d of m.materi">
 					<!-- <ion-card [routerLink]="['detail', {idMateri: d._id}]" mode="ios" class="ion-no-margin w-100 h-100"> -->
-					<ion-card mode="ios" class="ion-no-margin w-100 h-100">
+					<ion-card [routerLink]="['detail', { idMateri: d._id }]" mode="ios" class="ion-no-margin w-100 h-100">
 						<div class="p-relative">
 							<div class="d-flex flex-column p-1">
 								<div class="flex-1 c-primary mb-1"><b>{{jenisMateri[d.jenis].title}}</b></div>	

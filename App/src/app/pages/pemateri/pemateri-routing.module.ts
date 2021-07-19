@@ -43,6 +43,10 @@ const routes: Routes = [
     loadChildren: () => import('./pelajaran/detail/detail.module').then( m => m.DetailPageModule)
   },
   {
+    path: 'hasil/detail',
+    loadChildren: () => import('./hasil/detail/detail.module').then( m => m.DetailPageModule)
+  },
+  {
     path: 'akun/edit',
     loadChildren: () => import('./akun/edit/edit.module').then( m => m.EditPageModule)
   },

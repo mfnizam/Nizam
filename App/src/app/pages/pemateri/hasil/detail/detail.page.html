@@ -1,0 +1,49 @@
+<ion-content class="ion-padding">
+	<ion-grid>
+		<ion-row class="header-title ion-margin-bottom ion-align-items-center">
+			<ion-col size="auto" class="d-none back-btn">
+				<ion-icon name="arrow-back" (click)="goBack()"></ion-icon>
+			</ion-col>
+			<ion-col>Detail Hasil {{dataMateri?.jenis == 1? 'Pre Test' : ''}}</ion-col>
+		</ion-row>
+		<ion-row class="mb-2">
+			<ion-col>
+				<ion-card mode="ios" color="primary" class="ion-no-margin p-1">
+					<small>Sudah mengerjakan</small>
+					<h3 class="ion-no-margin"><b>{{dataMateri?.mengerjakan || 0}}</b> <small> Peserta</small></h3>
+				</ion-card>
+			</ion-col>
+
+			<ion-col>
+				<ion-card mode="ios" color="medium" class="ion-no-margin p-1">
+					<small>Belum mengerjakan</small>
+					<h3 class="ion-no-margin"><b>{{dataMateri?.peserta?.length || 0}}</b> <small> Peserta</small></h3>
+				</ion-card>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<h3 class="ion-no-margin c-medium-tint"><b>Nilai Peserta</b></h3>
+			</ion-col>
+		</ion-row>
+		<ion-row>
+			<ion-col>
+				<ion-item *ngFor="let p of dataMateri?.peserta" class="ion-no-padding">
+          <ion-avatar slot="start">
+            <img src="https://investor.waskita.co.id/assets/img/no-profile-photo.jpg">
+          </ion-avatar>
+          <ion-label>
+            <h2>{{p.namaLengkap}}</h2>
+            <p>{{p.email}}</p>
+          </ion-label>
+          <div slot="end">
+          	<h3 class="ion-no-margin " [ngClass]="p.penilaian == null || p.penilaian == undefined? 'c-medium' : 'c-primary'"><b>{{(p.penilaian * 100 / dataMateri?.soal?.length) || 0}}</b></h3>
+          </div>
+        </ion-item>
+        <ion-card *ngIf="dataMateri?.peserta?.length < 1" mode="ios" class="ion-no-margin ion-padding ion-text-center">
+        	Data Peserta Kosong
+        </ion-card>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>
